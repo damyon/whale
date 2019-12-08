@@ -88,14 +88,13 @@ function main() {
   // Here's where we call the routine that builds all the
   // objects we'll be drawing.
   let drawables = [
-    new Sea()
+    new Sea(),
+    new Terrain()
   ];
 
   for (drawable of drawables) {
     drawable.initBuffers(gl);
   }
-
-  const texture = loadTexture(gl, 'texture/water.jpg');
 
   var then = 0;
   var absTime = 0;
@@ -107,7 +106,7 @@ function main() {
     then = now;
 
     for (drawable of drawables) {
-      drawable.draw(gl, programInfo, texture, deltaTime, absTime);
+      drawable.draw(gl, programInfo, deltaTime, absTime);
     }
 
     absTime += deltaTime;

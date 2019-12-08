@@ -1,10 +1,10 @@
 
-class Sea extends Drawable {
+class Terrain extends Drawable {
 
   constructor() {
     super();
-    this.seaLOD = 1;
-    this.seaSize = 40;
+    this.terrainSize = 10;
+    this.terrainLOD = 10;
     this.buffers = null;
   }
 
@@ -14,37 +14,37 @@ class Sea extends Drawable {
    * Initialize the buffers we'll need.
    */
   initBuffers(gl) {
-    // Create a buffer for the sea's vertex positions.
-    const seaPositionBuffer = gl.createBuffer();
+    // Create a buffer for the terrain's vertex positions.
+    const terrainPositionBuffer = gl.createBuffer();
 
-    // Select the seaPositionBuffer as the one to apply buffer
+    // Select the terrainPositionBuffer as the one to apply buffer
     // operations to from here out.
-    gl.bindBuffer(gl.ARRAY_BUFFER, seaPositionBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, terrainPositionBuffer);
 
-    // Now create an array of positions for the sea.
-    const unit = this.seaSize / this.seaLOD;
-    let seaPositions = [], i = 0, j = 0, offset = 0, offsetX = 0, offsetY = 0, offsetZ = 0, one = 0, k = 0;
-    one = - this.seaSize/2;
-    for (i = 0; i < this.seaLOD; i++) {
-      for (j = 0; j < this.seaLOD; j++) {
+    // Now create an array of positions for the terrain.
+    const unit = this.terrainSize / this.terrainLOD;
+    let terrainPositions = [], i = 0, j = 0, offset = 0, offsetX = 0, offsetY = 0, offsetZ = 0, one = 0, k = 0;
+    one = - this.terrainSize/2;
+    for (i = 0; i < this.terrainLOD; i++) {
+      for (j = 0; j < this.terrainLOD; j++) {
         offsetX = one + i * unit;
         offsetZ = one + j * unit;
 
-        seaPositions[offset++] = offsetX;
-        seaPositions[offset++] = offsetY;
-        seaPositions[offset++] = offsetZ;
+        terrainPositions[offset++] = offsetX;
+        terrainPositions[offset++] = offsetY + Math.random() - 0.5;
+        terrainPositions[offset++] = offsetZ;
 
-        seaPositions[offset++] = offsetX + unit;
-        seaPositions[offset++] = offsetY;
-        seaPositions[offset++] = offsetZ;
+        terrainPositions[offset++] = offsetX + unit;
+        terrainPositions[offset++] = offsetY + Math.random() - 0.5;
+        terrainPositions[offset++] = offsetZ;
 
-        seaPositions[offset++] = offsetX + unit;
-        seaPositions[offset++] = offsetY;
-        seaPositions[offset++] = offsetZ + unit;
+        terrainPositions[offset++] = offsetX + unit;
+        terrainPositions[offset++] = offsetY + Math.random() - 0.5;
+        terrainPositions[offset++] = offsetZ + unit;
 
-        seaPositions[offset++] = offsetX;
-        seaPositions[offset++] = offsetY;
-        seaPositions[offset++] = offsetZ + unit;
+        terrainPositions[offset++] = offsetX;
+        terrainPositions[offset++] = offsetY + Math.random() - 0.5;
+        terrainPositions[offset++] = offsetZ + unit;
       }
     }
 
@@ -52,75 +52,75 @@ class Sea extends Drawable {
     // shape. We do this by creating a Float32Array from the
     // JavaScript array, then use it to fill the current buffer.
 
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(seaPositions), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(terrainPositions), gl.STATIC_DRAW);
     // Set up the normals for the vertices, so that we can compute lighting.
 
-    const seaNormalBuffer = gl.createBuffer();
+    const terrainNormalBuffer = gl.createBuffer();
     const corners = 4;
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, seaNormalBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, terrainNormalBuffer);
 
-    let seaVertexNormals = [];
+    let terrainVertexNormals = [];
     offset = 0;
 
-    for (i = 0; i < this.seaLOD; i++) {
-      for (j = 0; j < this.seaLOD; j++) {
+    for (i = 0; i < this.terrainLOD; i++) {
+      for (j = 0; j < this.terrainLOD; j++) {
         for (k = 0; k < corners; k++) {
-          seaVertexNormals[offset++] = 0;
-          seaVertexNormals[offset++] = 0;
-          seaVertexNormals[offset++] = 1;
+          terrainVertexNormals[offset++] = 0;
+          terrainVertexNormals[offset++] = 0;
+          terrainVertexNormals[offset++] = 1; // Needs work.
         }
       }
     }
 
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(seaVertexNormals),
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(terrainVertexNormals),
                   gl.STATIC_DRAW);
-    const seaTextureCoordBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, seaTextureCoordBuffer);
+    const terrainTextureCoordBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, terrainTextureCoordBuffer);
 
-    let seaTextureCoordinates = [];
+    let terrainTextureCoordinates = [];
     offset = 0;
 
-    for (i = 0; i < this.seaLOD; i++) {
-      for (j = 0; j < this.seaLOD; j++) {
-        seaTextureCoordinates[offset++] = 0; // X
-        seaTextureCoordinates[offset++] = 0; // Y
+    for (i = 0; i < this.terrainLOD; i++) {
+      for (j = 0; j < this.terrainLOD; j++) {
+        terrainTextureCoordinates[offset++] = 0; // X
+        terrainTextureCoordinates[offset++] = 0; // Y
 
-        seaTextureCoordinates[offset++] = 1; // X
-        seaTextureCoordinates[offset++] = 0; // Y
+        terrainTextureCoordinates[offset++] = 1; // X
+        terrainTextureCoordinates[offset++] = 0; // Y
 
-        seaTextureCoordinates[offset++] = 1; // X
-        seaTextureCoordinates[offset++] = 1; // Y
+        terrainTextureCoordinates[offset++] = 1; // X
+        terrainTextureCoordinates[offset++] = 1; // Y
 
-        seaTextureCoordinates[offset++] = 0; // X
-        seaTextureCoordinates[offset++] = 1; // Y
+        terrainTextureCoordinates[offset++] = 0; // X
+        terrainTextureCoordinates[offset++] = 1; // Y
       }
     }
 
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(seaTextureCoordinates),
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(terrainTextureCoordinates),
                   gl.STATIC_DRAW);
 
     // Build the element array buffer; this specifies the indices
     // into the vertex arrays for each face's vertices.
 
-    const seaIndexBuffer = gl.createBuffer();
-    let start = 0, seaIndices = [];
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, seaIndexBuffer);
+    const terrainIndexBuffer = gl.createBuffer();
+    let start = 0, terrainIndices = [];
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, terrainIndexBuffer);
 
     // This array defines each face as two triangles, using the
     // indices into the vertex array to specify each triangle's
     // position.
     offset = 0;
     start = 0;
-    for (i = 0; i < this.seaLOD; i++) {
-      for (j = 0; j < this.seaLOD; j++) {
-        seaIndices[offset++] = start;
-        seaIndices[offset++] = start + 1;
-        seaIndices[offset++] = start + 2;
+    for (i = 0; i < this.terrainLOD; i++) {
+      for (j = 0; j < this.terrainLOD; j++) {
+        terrainIndices[offset++] = start;
+        terrainIndices[offset++] = start + 1;
+        terrainIndices[offset++] = start + 2;
 
-        seaIndices[offset++] = start;
-        seaIndices[offset++] = start + 2;
-        seaIndices[offset++] = start + 3;
+        terrainIndices[offset++] = start;
+        terrainIndices[offset++] = start + 2;
+        terrainIndices[offset++] = start + 3;
         start += 4;
       }
     }
@@ -128,66 +128,24 @@ class Sea extends Drawable {
     // Now send the element array to GL
 
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
-        new Uint16Array(seaIndices), gl.STATIC_DRAW);
+        new Uint16Array(terrainIndices), gl.STATIC_DRAW);
 
     this.buffers = {
-      position: seaPositionBuffer,
-      normal: seaNormalBuffer,
-      textureCoord: seaTextureCoordBuffer,
-      indices: seaIndexBuffer,
+      position: terrainPositionBuffer,
+      normal: terrainNormalBuffer,
+      textureCoord: terrainTextureCoordBuffer,
+      indices: terrainIndexBuffer,
     };
 
     // Load the texture.
-    this.loadTexture(gl, 'texture/water.jpg');
+    this.loadTexture(gl, 'texture/sand.jpg');
 
     return this.buffers;
   }
 
   /**
-   * animateTextureCoordinates
-   * Make ripples and waves by adjusting the texture coordinates with a sine wave.
-   *
-   * @param gl
-   * @param textureCoordBuffer
-   * @param deltaTime
-   */
-  animateTextureCoordinates(gl, textureCoordBuffer, deltaTime) {
-    gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
-
-    const loopDelay = 0.1;
-    const loopDelay2 = 0.2;
-
-    const animation = (Math.sin(deltaTime * loopDelay) + 1) / 16;
-    const animation2 = (Math.sin(deltaTime * loopDelay2) + 1) / 16;
-    gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
-
-    let seaTextureCoordinates = [];
-    let offset = 0;
-    let i = 0, j = 0;
-
-    for (i = 0; i < this.seaLOD; i++) {
-      for (j = 0; j < this.seaLOD; j++) {
-        seaTextureCoordinates[offset++] = animation; // X
-        seaTextureCoordinates[offset++] = animation; // Y
-
-        seaTextureCoordinates[offset++] = 0.5 + animation + animation2; // X
-        seaTextureCoordinates[offset++] = animation; // Y
-
-        seaTextureCoordinates[offset++] = 0.5 + animation; // X
-        seaTextureCoordinates[offset++] = 0.5 + animation - animation2; // Y
-
-        seaTextureCoordinates[offset++] = animation + animation2; // X
-        seaTextureCoordinates[offset++] = 0.5 + animation + animation2; // Y
-      }
-    }
-
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(seaTextureCoordinates),
-                  gl.STATIC_DRAW);
-  }
-
-  /**
    * draw
-   * Draw the sea.
+   * Draw the terrain.
    * @param gl
    * @param programInfo
    * @param deltaTime
@@ -201,7 +159,7 @@ class Sea extends Drawable {
 
     // Clear the canvas before we start drawing on it.
 
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // Create a perspective matrix, a special matrix that is
     // used to simulate the distortion of perspective in a camera.
@@ -337,7 +295,7 @@ class Sea extends Drawable {
     gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
 
     {
-      const vertexCount = 6 * (this.seaLOD * this.seaLOD);
+      const vertexCount = 6 * (this.terrainLOD * this.terrainLOD);
       const type = gl.UNSIGNED_SHORT;
       const offset = 0;
       gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
