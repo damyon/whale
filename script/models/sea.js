@@ -192,8 +192,10 @@ class Sea extends Drawable {
    * @param programInfo
    * @param deltaTime
    * @param absTime
+   * @param matrices
    */
-  draw(gl, programInfo, deltaTime, absTime) {
+  draw(gl, programInfo, deltaTime, absTime, matrices) {
+    /*
     gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
     gl.clearDepth(1.0);                 // Clear everything
     gl.enable(gl.DEPTH_TEST);           // Enable depth testing
@@ -238,6 +240,7 @@ class Sea extends Drawable {
     const normalMatrix = mat4.create();
     mat4.invert(normalMatrix, modelViewMatrix);
     mat4.transpose(normalMatrix, normalMatrix);
+*/
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute
@@ -315,15 +318,15 @@ class Sea extends Drawable {
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.projectionMatrix,
         false,
-        projectionMatrix);
+        matrices.projectionMatrix);
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.modelViewMatrix,
         false,
-        modelViewMatrix);
+        matrices.modelViewMatrix);
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.normalMatrix,
         false,
-        normalMatrix);
+        matrices.normalMatrix);
 
     // Specify the texture to map onto the faces.
 

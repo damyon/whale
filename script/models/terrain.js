@@ -4,7 +4,7 @@ class Terrain extends Drawable {
   constructor() {
     super();
     this.terrainSize = 10;
-    this.terrainLOD = 10;
+    this.terrainLOD = 48;
     this.buffers = null;
   }
 
@@ -31,19 +31,19 @@ class Terrain extends Drawable {
         offsetZ = one + j * unit;
 
         terrainPositions[offset++] = offsetX;
-        terrainPositions[offset++] = offsetY + Math.random() - 0.5;
+        terrainPositions[offset++] = offsetY;
         terrainPositions[offset++] = offsetZ;
 
         terrainPositions[offset++] = offsetX + unit;
-        terrainPositions[offset++] = offsetY + Math.random() - 0.5;
+        terrainPositions[offset++] = offsetY;
         terrainPositions[offset++] = offsetZ;
 
         terrainPositions[offset++] = offsetX + unit;
-        terrainPositions[offset++] = offsetY + Math.random() - 0.5;
+        terrainPositions[offset++] = offsetY;
         terrainPositions[offset++] = offsetZ + unit;
 
         terrainPositions[offset++] = offsetX;
-        terrainPositions[offset++] = offsetY + Math.random() - 0.5;
+        terrainPositions[offset++] = offsetY;
         terrainPositions[offset++] = offsetZ + unit;
       }
     }
@@ -140,7 +140,121 @@ class Terrain extends Drawable {
     // Load the texture.
     this.loadTexture(gl, 'texture/sand.jpg');
 
+    // Load the heightmap.
+    this.loadHeightmap(gl, 'texture/heightmap.png');
+
     return this.buffers;
+  }
+
+  loadHeightmap(gl, filename) {
+    const image = new Image();
+    const canvas = document.createElement('canvas');
+    image.onload = function() {
+      canvas.width = this.terrainLOD + 1;
+      canvas.height = this.terrainLOD + 1;
+      canvas.getContext('2d').drawImage(image, 0, 0, this.terrainLOD + 1, this.terrainLOD + 1);
+
+      let raw = canvas.getContext('2d').getImageData(0, 0, this.terrainLOD + 1, this.terrainLOD + 1).data;
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
+      // Now create an array of positions for the terrain.
+      const unit = this.terrainSize / this.terrainLOD;
+      let terrainPositions = [], i = 0, j = 0, offset = 0, offsetX = 0, offsetY1 = 0, offsetY2 = 0, offsetY3 = 0, offsetY4 = 0, offsetZ = 0, one = 0, index = 0;
+      let terrainNormals = [];
+      let normalOffset = 0, k = 0, lookupOffset = 0;
+
+      one = - this.terrainSize/2;
+      let bad = 0;
+      for (i = 0; i < this.terrainLOD; i++) {
+        for (j = 0; j < this.terrainLOD; j++) {
+          offsetX = one + i * unit;
+          offsetZ = one + j * unit;
+
+          index = ((i * this.terrainLOD) + j) * 4;
+          offsetY1 = (raw[index] / 255) * 1.5 - 0.1;
+          index = (((i + 1) * this.terrainLOD) + j) * 4;
+          offsetY2 = (raw[index] / 255) * 1.5 - 0.1;
+          index = (((i + 1) * this.terrainLOD) + (j + 1)) * 4;
+          offsetY3 = (raw[index] / 255) * 1.5 - 0.1;
+          index = ((i * this.terrainLOD) + (j + 1)) * 4;
+          offsetY4 = (raw[index] / 255) * 1.5 - 0.1;
+
+          lookupOffset = offset;
+          terrainPositions[offset++] = offsetX;
+          terrainPositions[offset++] = offsetY1;
+          terrainPositions[offset++] = offsetZ;
+
+          terrainPositions[offset++] = offsetX + unit;
+          terrainPositions[offset++] = offsetY2;
+          terrainPositions[offset++] = offsetZ;
+
+          terrainPositions[offset++] = offsetX + unit;
+          terrainPositions[offset++] = offsetY3;
+          terrainPositions[offset++] = offsetZ + unit;
+
+          terrainPositions[offset++] = offsetX;
+          terrainPositions[offset++] = offsetY4;
+          terrainPositions[offset++] = offsetZ + unit;
+
+          let x1 = terrainPositions[lookupOffset + 3] - terrainPositions[lookupOffset]; 
+          let y1 = terrainPositions[lookupOffset + 4] - terrainPositions[lookupOffset + 1]; 
+          let z1 = terrainPositions[lookupOffset + 5] - terrainPositions[lookupOffset + 2]; 
+
+          let x2 = terrainPositions[lookupOffset + 6] - terrainPositions[lookupOffset]; 
+          let y2 = terrainPositions[lookupOffset + 7] - terrainPositions[lookupOffset + 1]; 
+          let z2 = terrainPositions[lookupOffset + 8] - terrainPositions[lookupOffset + 2]; 
+
+          for (k = 0; k < 4; k++) {
+            // X:1 Y:2 Z:3 1:A 2:B
+            let xN = y1 * z2 - z1 * y2;
+            let yN = z1 * x2 - x1 * z2;
+            let zN = x1 * y2 - y1 * x2;
+
+            let sum = xN + yN + zN;
+
+            terrainNormals[normalOffset++] = xN / sum;
+            terrainNormals[normalOffset++] = yN / sum;
+            terrainNormals[normalOffset++] = zN / sum;
+          }
+        }
+      }
+      console.log(bad);
+      normalOffset = 0;
+      for (i = 0; i < this.terrainLOD; i++) {
+        for (j = 0; j < this.terrainLOD; j++) {
+          if (j == this.terrainLOD - 1 || i == this.terrainLOD - 1) {
+            normalOffset += 12;
+          } else {
+            let row = this.terrainLOD * 12;
+            lookupOffset = normalOffset;
+            normalOffset += 3;
+            // Top
+            terrainNormals[normalOffset++] = terrainNormals[lookupOffset + row + 9];
+            terrainNormals[normalOffset++] = terrainNormals[lookupOffset + row + 10];
+            terrainNormals[normalOffset++] = terrainNormals[lookupOffset + row + 11];
+
+            // Right
+            terrainNormals[normalOffset++] = terrainNormals[lookupOffset + row + 9];
+            terrainNormals[normalOffset++] = terrainNormals[lookupOffset + row + 10];
+            terrainNormals[normalOffset++] = terrainNormals[lookupOffset + row + 11];
+
+            // Bottom
+            terrainNormals[normalOffset++] = terrainNormals[lookupOffset ];
+            terrainNormals[normalOffset++] = terrainNormals[lookupOffset + 1];
+            terrainNormals[normalOffset++] = terrainNormals[lookupOffset + 2];
+          }
+        }
+      }
+
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(terrainPositions),
+                    gl.STATIC_DRAW);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.normal);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(terrainNormals),
+                    gl.STATIC_DRAW);
+      
+    }.bind(this);
+    image.src = filename;
   }
 
   /**
@@ -150,8 +264,10 @@ class Terrain extends Drawable {
    * @param programInfo
    * @param deltaTime
    * @param absTime
+   * @param matrices
    */
-  draw(gl, programInfo, deltaTime, absTime) {
+  draw(gl, programInfo, deltaTime, absTime, matrices) {
+  /*
     gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
     gl.clearDepth(1.0);                 // Clear everything
     gl.enable(gl.DEPTH_TEST);           // Enable depth testing
@@ -196,6 +312,7 @@ class Terrain extends Drawable {
     const normalMatrix = mat4.create();
     mat4.invert(normalMatrix, modelViewMatrix);
     mat4.transpose(normalMatrix, normalMatrix);
+  */
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute
@@ -225,9 +342,6 @@ class Terrain extends Drawable {
       const normalize = false;
       const stride = 0;
       const offset = 0;
-
-      // Animate the texture coordinates.
-      this.animateTextureCoordinates(gl, this.buffers.textureCoord, absTime);
 
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.textureCoord);
       gl.vertexAttribPointer(
@@ -273,15 +387,15 @@ class Terrain extends Drawable {
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.projectionMatrix,
         false,
-        projectionMatrix);
+        matrices.projectionMatrix);
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.modelViewMatrix,
         false,
-        modelViewMatrix);
+        matrices.modelViewMatrix);
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.normalMatrix,
         false,
-        normalMatrix);
+        matrices.normalMatrix);
 
     // Specify the texture to map onto the faces.
 
