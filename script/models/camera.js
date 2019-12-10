@@ -5,7 +5,7 @@ class Camera {
   }
 
   prepareFrame(gl, programInfo, deltaTime, absTime) {
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
+    gl.clearColor(0.0, 0.4, 0.8, 1.0);  // Clear to black, fully opaque
     gl.clearDepth(1.0);                 // Clear everything
     gl.enable(gl.DEPTH_TEST);           // Enable depth testing
     gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
@@ -47,7 +47,7 @@ class Camera {
                    [-0.0, -1.0, -6.0]);  // amount to translate
     mat4.rotate(modelViewMatrix,  // destination matrix
               modelViewMatrix,  // matrix to rotate
-              absTime / 10,     // amount to rotate in radians
+              absTime / 32,     // amount to rotate in radians
               [0, 1, 0]);
 
     const normalMatrix = mat4.create();
