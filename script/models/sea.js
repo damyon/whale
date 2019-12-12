@@ -4,7 +4,7 @@ class Sea extends Drawable {
   constructor() {
     super();
     this.seaLOD = 1;
-    this.seaSize = 40;
+    this.seaSize = 160;
     this.buffers = null;
   }
 

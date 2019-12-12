@@ -3,7 +3,7 @@ class Terrain extends Drawable {
 
   constructor() {
     super();
-    this.terrainSize = 10;
+    this.terrainSize = 20;
     this.terrainLOD = 48;
     this.buffers = null;
   }
@@ -158,12 +158,12 @@ class Terrain extends Drawable {
 
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
       // Now create an array of positions for the terrain.
-      const unit = this.terrainSize / this.terrainLOD;
+      const unit = 2 * this.terrainSize / this.terrainLOD;
       let terrainPositions = [], i = 0, j = 0, offset = 0, offsetX = 0, offsetY1 = 0, offsetY2 = 0, offsetY3 = 0, offsetY4 = 0, offsetZ = 0, one = 0, index = 0;
       let terrainNormals = [];
       let normalOffset = 0, k = 0, lookupOffset = 0;
 
-      one = - this.terrainSize/2;
+      one = - this.terrainSize;
       let bad = 0;
       for (i = 0; i < this.terrainLOD; i++) {
         for (j = 0; j < this.terrainLOD; j++) {
@@ -180,19 +180,19 @@ class Terrain extends Drawable {
           offsetY4 = (raw[index] / 255) * 1.5 - 0.1;
 
           lookupOffset = offset;
-          terrainPositions[offset++] = offsetX;
+          terrainPositions[offset++] = offsetX - 6;
           terrainPositions[offset++] = offsetY1;
           terrainPositions[offset++] = offsetZ;
 
-          terrainPositions[offset++] = offsetX + unit;
+          terrainPositions[offset++] = offsetX + unit - 6;
           terrainPositions[offset++] = offsetY2;
           terrainPositions[offset++] = offsetZ;
 
-          terrainPositions[offset++] = offsetX + unit;
+          terrainPositions[offset++] = offsetX + unit - 6;
           terrainPositions[offset++] = offsetY3;
           terrainPositions[offset++] = offsetZ + unit;
 
-          terrainPositions[offset++] = offsetX;
+          terrainPositions[offset++] = offsetX - 6;
           terrainPositions[offset++] = offsetY4;
           terrainPositions[offset++] = offsetZ + unit;
 

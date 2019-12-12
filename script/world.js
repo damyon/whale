@@ -89,7 +89,10 @@ function main() {
   // objects we'll be drawing.
   let drawables = [
     new Sea(),
-    new Terrain()
+    new Terrain(),
+    new Trunk(),
+    new Leaves(),
+    new Leaves2()
   ];
   let camera = new Camera();
 

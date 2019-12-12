@@ -44,7 +44,7 @@ class Camera {
 
     mat4.translate(modelViewMatrix,     // destination matrix
                    modelViewMatrix,     // matrix to translate
-                   [-0.0, -1.0, -6.0]);  // amount to translate
+                   [-0.0, -2.0, -6.0]);  // amount to translate
     mat4.rotate(modelViewMatrix,  // destination matrix
               modelViewMatrix,  // matrix to rotate
               absTime / 32,     // amount to rotate in radians
