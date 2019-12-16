@@ -41,14 +41,24 @@ class Camera {
 
     // Now move the drawing position a bit to where we want to
     // start drawing the square.
+    // R (rand)
+    // T
+    // R(fixed)
 
     mat4.translate(modelViewMatrix,     // destination matrix
                    modelViewMatrix,     // matrix to translate
-                   [-0.0, -2.0, -6.0]);  // amount to translate
+                   [0.0, -2.0, -8.0]);  // amount to translate
     mat4.rotate(modelViewMatrix,  // destination matrix
               modelViewMatrix,  // matrix to rotate
-              absTime / 32,     // amount to rotate in radians
+              absTime * 0.02,     // amount to rotate in radians
               [0, 1, 0]);
+    mat4.rotate(modelViewMatrix,  // destination matrix
+              modelViewMatrix,  // matrix to rotate
+              Math.PI * -1,     // amount to rotate in radians
+              [0, 1, 0]);
+    mat4.translate(modelViewMatrix,     // destination matrix
+                   modelViewMatrix,     // matrix to translate
+                   [-2.0, 0.0, 2.0]);  // amount to translate
 
     const normalMatrix = mat4.create();
     mat4.invert(normalMatrix, modelViewMatrix);

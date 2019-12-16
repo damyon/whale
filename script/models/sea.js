@@ -156,7 +156,7 @@ class Sea extends Drawable {
 
     const loopDelay = 0.1;
     const loopDelay2 = 0.5;
-    deltaTime /= 10;
+    deltaTime /= 30;
 
     const animation = (Math.sin(deltaTime * loopDelay) + 1) / 16;
     const animation2 = (Math.sin(deltaTime * loopDelay2) + 1) / 16;

@@ -92,7 +92,9 @@ function main() {
     new Terrain(),
     new Trunk(),
     new Leaves(),
-    new Leaves2()
+    new Leaves2(),
+    new Star(false),
+    new Star(true),
   ];
   let camera = new Camera();
 
@@ -105,7 +107,7 @@ function main() {
 
   // Draw the scene repeatedly
   function render(now) {
-    now *= 0.001;  // convert to seconds
+    now *= 0.01;  // convert to seconds
     const deltaTime = now - then;
     then = now;
 
