@@ -115,12 +115,12 @@ class Terrain extends Drawable {
     for (i = 0; i < this.terrainLOD; i++) {
       for (j = 0; j < this.terrainLOD; j++) {
         terrainIndices[offset++] = start;
-        terrainIndices[offset++] = start + 1;
         terrainIndices[offset++] = start + 2;
+        terrainIndices[offset++] = start + 1;
 
         terrainIndices[offset++] = start;
-        terrainIndices[offset++] = start + 2;
         terrainIndices[offset++] = start + 3;
+        terrainIndices[offset++] = start + 2;
         start += 4;
       }
     }

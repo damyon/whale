@@ -16,6 +16,10 @@ function main() {
     return;
   }
 
+  gl.enable(gl.DEPTH_TEST);
+  gl.enable(gl.CULL_FACE);
+  gl.cullFace(gl.BACK);
+
   // Vertex shader program
 
   const vsSource = `

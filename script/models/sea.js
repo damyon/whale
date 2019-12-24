@@ -115,12 +115,12 @@ class Sea extends Drawable {
     for (i = 0; i < this.seaLOD; i++) {
       for (j = 0; j < this.seaLOD; j++) {
         seaIndices[offset++] = start;
-        seaIndices[offset++] = start + 1;
         seaIndices[offset++] = start + 2;
+        seaIndices[offset++] = start + 1;
 
         seaIndices[offset++] = start;
-        seaIndices[offset++] = start + 2;
         seaIndices[offset++] = start + 3;
+        seaIndices[offset++] = start + 2;
         start += 4;
       }
     }
