@@ -3,6 +3,10 @@
 class Drawable {
   constructor() {
     this.texture = null;
+    this.rotateY = 0;
+    this.positionX = 0;
+    this.positionY = 0;
+    this.positionZ = 0;
   }
 
   initBuffers(gl) {
@@ -11,7 +15,15 @@ class Drawable {
   animateTextureCoordinates(gl, textureCoordBuffer, deltaTime) {
   }
 
-  draw(gl, programInfo, buffers, deltaTime) {
+  draw(gl) {
+    var modelViewMatrix = mat4.create();
+
+    mat4.rotateY(modelViewMatrix, modelViewMatrix, this.rorateY);
+    mat4.translate(modelViewMatrix, modelViewMatrix, [this.positionX, this.positionY, this.positionZ]);
+
+    var lightModelViewMatrix = mat4.create();
+    mat4.multiply(lightModelViewMatrix, lightViewMatrix, modelViewMatrix);
+    gl.uniformMatrix4fv(uLightMatrix, false, lightModelViewMatrix);
   }
 
   isPowerOf2(value) {

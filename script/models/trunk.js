@@ -54,17 +54,6 @@ class Trunk extends Drawable {
     // JavaScript array, then use it to fill the current buffer.
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(treePositions), gl.STATIC_DRAW);
-    // Set up the normals for the vertices, so that we can compute lighting.
-
-    let treeNormalBuffer = gl.createBuffer();
-    let treeVertexNormals = [];
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, treeNormalBuffer);
-
-    treeVertexNormals = treePositions;
-
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(treeVertexNormals),
-                  gl.STATIC_DRAW);
     const treeTextureCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, treeTextureCoordBuffer);
 
@@ -107,7 +96,6 @@ class Trunk extends Drawable {
 
     this.buffers = {
       position: treePositionBuffer,
-      normal: treeNormalBuffer,
       textureCoord: treeTextureCoordBuffer,
       indices: treeIndexBuffer,
     };
@@ -122,31 +110,37 @@ class Trunk extends Drawable {
    * draw
    * Draw the tree.
    * @param gl
-   * @param programInfo
-   * @param deltaTime
-   * @param absTime
-   * @param matrices
+   * @param camera
    */
-  draw(gl, programInfo, deltaTime, absTime, matrices) {
+  draw(gl, camera, shadow) {
+    // gl.uniform3fv(camera.uColor, [0.8, 0.8, 0.2]);
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute
+    gl.uniform1i(camera.isWater, 0);
     {
       const numComponents = 3;
       const type = gl.FLOAT;
       const normalize = false;
       const stride = 0;
       const offset = 0;
+      const vertexPosition = gl.getAttribLocation(camera.lightShaderProgram, 'aVertexPosition');
+
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
       gl.vertexAttribPointer(
-          programInfo.attribLocations.vertexPosition,
+          vertexPosition,
           numComponents,
           type,
           normalize,
           stride,
           offset);
       gl.enableVertexAttribArray(
-          programInfo.attribLocations.vertexPosition);
+          vertexPosition);
     }
+
+    // this.uSampler = gl.getUniformLocation(camera.cameraShaderProgram, 'uSampler'),
+    // gl.activeTexture(gl.TEXTURE1);
+    // gl.bindTexture(gl.TEXTURE_2D, this.texture);
+    // gl.uniform1i(this.uSampler, 0);
 
     // Tell WebGL how to pull out the texture coordinates from
     // the texture coordinate buffer into the textureCoord attribute.
@@ -157,42 +151,23 @@ class Trunk extends Drawable {
       const stride = 0;
       const offset = 0;
 
+      const textureCoord = gl.getAttribLocation(camera.cameraShaderProgram, 'aTextureCoord');
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.textureCoord);
       gl.vertexAttribPointer(
-          programInfo.attribLocations.textureCoord,
+          textureCoord,
           numComponents,
           type,
           normalize,
           stride,
           offset);
-      gl.enableVertexAttribArray(
-          programInfo.attribLocations.textureCoord);
-    }
-
-    // Tell WebGL how to pull out the normals from
-    // the normal buffer into the vertexNormal attribute.
-    {
-      const numComponents = 3;
-      const type = gl.FLOAT;
-      const normalize = false;
-      const stride = 0;
-      const offset = 0;
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.normal);
-      gl.vertexAttribPointer(
-          programInfo.attribLocations.vertexNormal,
-          numComponents,
-          type,
-          normalize,
-          stride,
-          offset);
-      gl.enableVertexAttribArray(
-          programInfo.attribLocations.vertexNormal);
+      gl.enableVertexAttribArray(textureCoord);
     }
 
     // Tell WebGL which indices to use to index the vertices
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.indices);
 
     // Tell WebGL to use our program when drawing
+    /*
 
     gl.useProgram(programInfo.program);
 
@@ -206,21 +181,21 @@ class Trunk extends Drawable {
         programInfo.uniformLocations.modelViewMatrix,
         false,
         matrices.modelViewMatrix);
-    gl.uniformMatrix4fv(
-        programInfo.uniformLocations.normalMatrix,
-        false,
-        matrices.normalMatrix);
 
     // Specify the texture to map onto the faces.
 
-    // Tell WebGL we want to affect texture unit 0
-    gl.activeTexture(gl.TEXTURE0);
+    */
+    // Tell WebGL we want to affect texture unit 1
+    if (shadow) {
+      var uSampler = gl.getUniformLocation(camera.cameraShaderProgram, 'uSampler');
+      gl.activeTexture(gl.TEXTURE1);
 
-    // Bind the texture to texture unit 0
-    gl.bindTexture(gl.TEXTURE_2D, this.texture);
+      // Bind the texture to texture unit 1
+      gl.bindTexture(gl.TEXTURE_2D, this.texture);
 
-    // Tell the shader we bound the texture to texture unit 0
-    gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
+      // Tell the shader we bound the texture to texture unit 0
+      gl.uniform1i(uSampler, 1);
+    }
 
     {
       const vertexCount = 3 * this.treeLOD; //(this.treeLOD);

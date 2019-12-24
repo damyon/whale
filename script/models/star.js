@@ -55,17 +55,8 @@ class Star extends Drawable {
     // JavaScript array, then use it to fill the current buffer.
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(starPositions), gl.STATIC_DRAW);
-    // Set up the normals for the vertices, so that we can compute lighting.
 
-    let starNormalBuffer = gl.createBuffer();
-    let starVertexNormals = [];
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, starNormalBuffer);
-
-    starVertexNormals = starPositions;
-
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(starVertexNormals),
-                  gl.STATIC_DRAW);
     const starTextureCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, starTextureCoordBuffer);
 
@@ -97,7 +88,6 @@ class Star extends Drawable {
     // indices into the vertex array to specify each triangle's
     // position.
     for (i = 0; i < this.starLOD * 3; i++) {
-    //for (i = 0; i < 3; i++) {
       starIndices[i] = i;
     }
 
@@ -108,7 +98,6 @@ class Star extends Drawable {
 
     this.buffers = {
       position: starPositionBuffer,
-      normal: starNormalBuffer,
       textureCoord: starTextureCoordBuffer,
       indices: starIndexBuffer,
     };
@@ -123,30 +112,31 @@ class Star extends Drawable {
    * draw
    * Draw the star.
    * @param gl
-   * @param programInfo
-   * @param deltaTime
-   * @param absTime
-   * @param matrices
+   * @param camera
    */
-  draw(gl, programInfo, deltaTime, absTime, matrices) {
+  draw(gl, camera) {
+    //gl.uniform3fv(camera.uColor, [0.8, 0.8, 0.2]);
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute
+    gl.uniform1i(camera.isWater, 0);
     {
       const numComponents = 3;
       const type = gl.FLOAT;
       const normalize = false;
       const stride = 0;
       const offset = 0;
+      const vertexPosition = gl.getAttribLocation(camera.lightShaderProgram, 'aVertexPosition')
+
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
       gl.vertexAttribPointer(
-          programInfo.attribLocations.vertexPosition,
+          vertexPosition,
           numComponents,
           type,
           normalize,
           stride,
           offset);
       gl.enableVertexAttribArray(
-          programInfo.attribLocations.vertexPosition);
+          vertexPosition);
     }
 
     // Tell WebGL how to pull out the texture coordinates from
@@ -157,37 +147,18 @@ class Star extends Drawable {
       const normalize = false;
       const stride = 0;
       const offset = 0;
+      const textureCoord = gl.getAttribLocation(camera.cameraShaderProgram, 'aTextureCoord')
 
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.textureCoord);
       gl.vertexAttribPointer(
-          programInfo.attribLocations.textureCoord,
+          textureCoord,
           numComponents,
           type,
           normalize,
           stride,
           offset);
       gl.enableVertexAttribArray(
-          programInfo.attribLocations.textureCoord);
-    }
-
-    // Tell WebGL how to pull out the normals from
-    // the normal buffer into the vertexNormal attribute.
-    {
-      const numComponents = 3;
-      const type = gl.FLOAT;
-      const normalize = false;
-      const stride = 0;
-      const offset = 0;
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.normal);
-      gl.vertexAttribPointer(
-          programInfo.attribLocations.vertexNormal,
-          numComponents,
-          type,
-          normalize,
-          stride,
-          offset);
-      gl.enableVertexAttribArray(
-          programInfo.attribLocations.vertexNormal);
+          textureCoord);
     }
 
     // Tell WebGL which indices to use to index the vertices
@@ -195,10 +166,11 @@ class Star extends Drawable {
 
     // Tell WebGL to use our program when drawing
 
-    gl.useProgram(programInfo.program);
+    // gl.useProgram(programInfo.program);
 
     // Set the shader uniforms
 
+    /*
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.projectionMatrix,
         false,
@@ -207,21 +179,31 @@ class Star extends Drawable {
         programInfo.uniformLocations.modelViewMatrix,
         false,
         matrices.modelViewMatrix);
-    gl.uniformMatrix4fv(
-        programInfo.uniformLocations.normalMatrix,
-        false,
-        matrices.normalMatrix);
+    */
 
     // Specify the texture to map onto the faces.
 
     // Tell WebGL we want to affect texture unit 0
-    gl.activeTexture(gl.TEXTURE0);
+
+    /*
+    // Tell WebGL we want to affect texture unit 1
+    gl.activeTexture(gl.TEXTURE1);
 
     // Bind the texture to texture unit 0
+    gl.bindTexture(gl.TEXTURE_2D, shadowTexture);
+
+    // Tell the shader we bound the depth texture to texture unit 1
+    gl.uniform1i(programInfo.uniformLocations.uDepthTexture, 1);
+    */
+    // Tell WebGL we want to affect texture unit 1
+    var uSampler = gl.getUniformLocation(camera.lightShaderProgram, 'uSampler');
+    gl.activeTexture(gl.TEXTURE1);
+
+    // Bind the texture to texture unit 1
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
 
     // Tell the shader we bound the texture to texture unit 0
-    gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
+    gl.uniform1i(uSampler, 1);
 
     {
       const vertexCount = 3 * this.starLOD; //(this.starLOD);

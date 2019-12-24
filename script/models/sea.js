@@ -4,7 +4,7 @@ class Sea extends Drawable {
   constructor() {
     super();
     this.seaLOD = 1;
-    this.seaSize = 160;
+    this.seaSize = 300;
     this.buffers = null;
   }
 
@@ -53,28 +53,6 @@ class Sea extends Drawable {
     // JavaScript array, then use it to fill the current buffer.
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(seaPositions), gl.STATIC_DRAW);
-    // Set up the normals for the vertices, so that we can compute lighting.
-
-    const seaNormalBuffer = gl.createBuffer();
-    const corners = 4;
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, seaNormalBuffer);
-
-    let seaVertexNormals = [];
-    offset = 0;
-
-    for (i = 0; i < this.seaLOD; i++) {
-      for (j = 0; j < this.seaLOD; j++) {
-        for (k = 0; k < corners; k++) {
-          seaVertexNormals[offset++] = 0;
-          seaVertexNormals[offset++] = 0;
-          seaVertexNormals[offset++] = 1;
-        }
-      }
-    }
-
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(seaVertexNormals),
-                  gl.STATIC_DRAW);
     const seaTextureCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, seaTextureCoordBuffer);
 
@@ -132,7 +110,6 @@ class Sea extends Drawable {
 
     this.buffers = {
       position: seaPositionBuffer,
-      normal: seaNormalBuffer,
       textureCoord: seaTextureCoordBuffer,
       indices: seaIndexBuffer,
     };
@@ -149,17 +126,19 @@ class Sea extends Drawable {
    *
    * @param gl
    * @param textureCoordBuffer
-   * @param deltaTime
+   * @param absTime
    */
-  animateTextureCoordinates(gl, textureCoordBuffer, deltaTime) {
+  animateTextureCoordinates(gl, textureCoordBuffer, absTime) {
     gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
 
     const loopDelay = 0.1;
     const loopDelay2 = 0.5;
-    deltaTime /= 30;
+    const loopDelay3 = 0.3;
+    absTime /= 30;
 
-    const animation = (Math.sin(deltaTime * loopDelay) + 1) / 16;
-    const animation2 = (Math.sin(deltaTime * loopDelay2) + 1) / 16;
+    const animation = (Math.sin(absTime * loopDelay) + 1) / 48;
+    const animation2 = (Math.sin(absTime * loopDelay2) + 1) / 38;
+    const animation3 = (Math.sin(absTime * loopDelay3) + 1) / 28;
     gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
 
     let seaTextureCoordinates = [];
@@ -171,14 +150,14 @@ class Sea extends Drawable {
         seaTextureCoordinates[offset++] = animation; // X
         seaTextureCoordinates[offset++] = animation; // Y
 
-        seaTextureCoordinates[offset++] = 0.5 + animation + animation2; // X
+        seaTextureCoordinates[offset++] = 0.5 + animation + animation2 + animation3; // X
         seaTextureCoordinates[offset++] = animation; // Y
 
         seaTextureCoordinates[offset++] = 0.5 + animation; // X
-        seaTextureCoordinates[offset++] = 0.5 + animation - animation2; // Y
+        seaTextureCoordinates[offset++] = 0.5 + animation - animation2 + animation3; // Y
 
-        seaTextureCoordinates[offset++] = animation + animation2; // X
-        seaTextureCoordinates[offset++] = 0.5 + animation + animation2; // Y
+        seaTextureCoordinates[offset++] = animation + animation2 + animation3; // X
+        seaTextureCoordinates[offset++] = 0.5 + animation + animation2 + animation3; // Y
       }
     }
     for (i = 0; i < seaTextureCoordinates.length; i++) {
@@ -193,30 +172,32 @@ class Sea extends Drawable {
    * draw
    * Draw the sea.
    * @param gl
-   * @param programInfo
+   * @param camera
    * @param deltaTime
    * @param absTime
-   * @param matrices
    */
-  draw(gl, programInfo, deltaTime, absTime, matrices) {
+  draw(gl, camera, shadow, deltaTime, absTime) {
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute
+    gl.uniform1i(camera.isWater, 1);
     {
       const numComponents = 3;
       const type = gl.FLOAT;
       const normalize = false;
       const stride = 0;
       const offset = 0;
+      const vertexPosition = gl.getAttribLocation(camera.lightShaderProgram, 'aVertexPosition');
+
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
       gl.vertexAttribPointer(
-          programInfo.attribLocations.vertexPosition,
+          vertexPosition,
           numComponents,
           type,
           normalize,
           stride,
           offset);
       gl.enableVertexAttribArray(
-          programInfo.attribLocations.vertexPosition);
+          vertexPosition);
     }
 
     // Tell WebGL how to pull out the texture coordinates from
@@ -227,40 +208,21 @@ class Sea extends Drawable {
       const normalize = false;
       const stride = 0;
       const offset = 0;
+      const textureCoord = gl.getAttribLocation(camera.cameraShaderProgram, 'aTextureCoord');
 
       // Animate the texture coordinates.
       this.animateTextureCoordinates(gl, this.buffers.textureCoord, absTime);
 
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.textureCoord);
       gl.vertexAttribPointer(
-          programInfo.attribLocations.textureCoord,
+          textureCoord,
           numComponents,
           type,
           normalize,
           stride,
           offset);
       gl.enableVertexAttribArray(
-          programInfo.attribLocations.textureCoord);
-    }
-
-    // Tell WebGL how to pull out the normals from
-    // the normal buffer into the vertexNormal attribute.
-    {
-      const numComponents = 3;
-      const type = gl.FLOAT;
-      const normalize = false;
-      const stride = 0;
-      const offset = 0;
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.normal);
-      gl.vertexAttribPointer(
-          programInfo.attribLocations.vertexNormal,
-          numComponents,
-          type,
-          normalize,
-          stride,
-          offset);
-      gl.enableVertexAttribArray(
-          programInfo.attribLocations.vertexNormal);
+          textureCoord);
     }
 
     // Tell WebGL which indices to use to index the vertices
@@ -268,10 +230,9 @@ class Sea extends Drawable {
 
     // Tell WebGL to use our program when drawing
 
-    gl.useProgram(programInfo.program);
-
     // Set the shader uniforms
 
+/*
     gl.uniformMatrix4fv(
         programInfo.uniformLocations.projectionMatrix,
         false,
@@ -280,21 +241,19 @@ class Sea extends Drawable {
         programInfo.uniformLocations.modelViewMatrix,
         false,
         matrices.modelViewMatrix);
-    gl.uniformMatrix4fv(
-        programInfo.uniformLocations.normalMatrix,
-        false,
-        matrices.normalMatrix);
-
+*/
     // Specify the texture to map onto the faces.
+    if (shadow) {
+      var uSampler = gl.getUniformLocation(camera.cameraShaderProgram, 'uSampler');
+      gl.activeTexture(gl.TEXTURE1);
 
-    // Tell WebGL we want to affect texture unit 0
-    gl.activeTexture(gl.TEXTURE0);
+      // Bind the texture to texture unit 1
+      gl.bindTexture(gl.TEXTURE_2D, this.texture);
 
-    // Bind the texture to texture unit 0
-    gl.bindTexture(gl.TEXTURE_2D, this.texture);
+      // Tell the shader we bound the texture to texture unit 0
+      gl.uniform1i(uSampler, 1);
+    }
 
-    // Tell the shader we bound the texture to texture unit 0
-    gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
 
     {
       const vertexCount = 6 * (this.seaLOD * this.seaLOD);
