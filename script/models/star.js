@@ -6,6 +6,7 @@ class Star extends Drawable {
     this.starLOD = 16;
     this.invert = invert?-1:1;
     this.starSize = 3;
+    this.starOffset = 2.5;
     this.buffers = null;
   }
 
@@ -30,21 +31,21 @@ class Star extends Drawable {
     for (i = 0; i < this.starLOD; i++) {
       offsetX = Math.sin(i * one) * this.starSize / 15 + skew;
       offsetZ = Math.cos(i * one) * this.starSize / 15 - skew;
-      offsetY = this.starSize + (this.invert * 0.1);
+      offsetY = this.starSize + (this.invert * 0.1) + this.starOffset;
       starPositions[offset++] = offsetX;
       starPositions[offset++] = offsetY;
       starPositions[offset++] = offsetZ;
 
       offsetX = Math.sin((i + 1) * one) * this.starSize / 15 + skew;
       offsetZ = Math.cos((i + 1) * one) * this.starSize / 15 - skew;
-      offsetY = this.starSize + (this.invert * 0.1);
+      offsetY = this.starSize + (this.invert * 0.1) + this.starOffset;
       starPositions[offset++] = offsetX;
       starPositions[offset++] = offsetY;
       starPositions[offset++] = offsetZ;
 
       offsetX = 0 + skew;
       offsetZ = 0 - skew;
-      offsetY = this.starSize + (this.invert * -0.3);
+      offsetY = this.starSize + (this.invert * -0.3) + this.starOffset;
       starPositions[offset++] = offsetX;
       starPositions[offset++] = offsetY;
       starPositions[offset++] = offsetZ;

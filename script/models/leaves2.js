@@ -5,6 +5,7 @@ class Leaves2 extends Drawable {
     super();
     this.treeLOD = 16;
     this.treeSize = 3;
+    this.treeOffset = 2.3;
     this.buffers = null;
   }
 
@@ -29,21 +30,21 @@ class Leaves2 extends Drawable {
     for (i = 0; i < this.treeLOD; i++) {
       offsetX = Math.sin(i * one) * this.treeSize / 5 + skew;
       offsetZ = Math.cos(i * one) * this.treeSize / 5 - skew;
-      offsetY = 1.4;
+      offsetY = 1.4 + this.treeOffset;
       treePositions[offset++] = offsetX;
       treePositions[offset++] = offsetY;
       treePositions[offset++] = offsetZ;
 
       offsetX = Math.sin((i + 1) * one) * this.treeSize / 5 + skew;
       offsetZ = Math.cos((i + 1) * one) * this.treeSize / 5 - skew;
-      offsetY = 1.4;
+      offsetY = 1.4 + this.treeOffset;
       treePositions[offset++] = offsetX;
       treePositions[offset++] = offsetY;
       treePositions[offset++] = offsetZ;
 
       offsetX = 0 + skew;
       offsetZ = 0 - skew;
-      offsetY = this.treeSize;
+      offsetY = this.treeSize + this.treeOffset;
       treePositions[offset++] = offsetX;
       treePositions[offset++] = offsetY;
       treePositions[offset++] = offsetZ;

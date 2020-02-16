@@ -3,7 +3,7 @@ class Terrain extends Drawable {
 
   constructor() {
     super();
-    this.terrainSize = 20;
+    this.terrainSize = 40;
     this.terrainLOD = 48;
     this.buffers = null;
   }
@@ -61,19 +61,23 @@ class Terrain extends Drawable {
     let terrainTextureCoordinates = [];
     offset = 0;
 
+    one = 1 / this.terrainLOD;
+
     for (i = 0; i < this.terrainLOD; i++) {
       for (j = 0; j < this.terrainLOD; j++) {
-        terrainTextureCoordinates[offset++] = 0; // X
-        terrainTextureCoordinates[offset++] = 0; // Y
+        let left = i * one;
+        let roof = j * one;
+        terrainTextureCoordinates[offset++] = left + one; // X
+        terrainTextureCoordinates[offset++] = roof + one; // Y
 
-        terrainTextureCoordinates[offset++] = 1; // X
-        terrainTextureCoordinates[offset++] = 0; // Y
+        terrainTextureCoordinates[offset++] = left; // X
+        terrainTextureCoordinates[offset++] = roof + one; // Y
 
-        terrainTextureCoordinates[offset++] = 1; // X
-        terrainTextureCoordinates[offset++] = 1; // Y
+        terrainTextureCoordinates[offset++] = left; // X
+        terrainTextureCoordinates[offset++] = roof; // Y
 
-        terrainTextureCoordinates[offset++] = 0; // X
-        terrainTextureCoordinates[offset++] = 1; // Y
+        terrainTextureCoordinates[offset++] = left + one; // X
+        terrainTextureCoordinates[offset++] = roof; // Y
       }
     }
 
@@ -118,10 +122,10 @@ class Terrain extends Drawable {
 
     
     // Load the texture.
-    this.loadTexture(gl, 'texture/sand.jpg');
+    this.loadTexture(gl, 'texture/picquet.jpg');
 
     // Load the heightmap.
-    this.loadHeightmap(gl, 'texture/heightmap.png');
+    this.loadHeightmap(gl, 'texture/picquet-heightmap.png');
 
     return this.buffers;
   }
@@ -142,37 +146,42 @@ class Terrain extends Drawable {
       let terrainPositions = [], i = 0, j = 0, offset = 0, offsetX = 0, offsetY1 = 0, offsetY2 = 0, offsetY3 = 0, offsetY4 = 0, offsetZ = 0, one = 0, index = 0;
       let terrainNormals = [];
       let lookupOffset = 0;
+      let heightOffset = 4.0;
+      let heightMapDimensions = 512;
 
       one = - this.terrainSize;
-      for (i = 0; i < this.terrainLOD; i++) {
-        for (j = 0; j < this.terrainLOD; j++) {
+      // for (i = 0; i < this.terrainLOD; i++) {
+      //   for (j = 0; j < this.terrainLOD; j++) {
+      for (i = this.terrainLOD - 1; i >= 0; i--) {
+        for (j = this.terrainLOD - 1; j >= 0; j--) {
           offsetX = one + i * unit;
           offsetZ = one + j * unit;
 
-          index = ((i * this.terrainLOD) + j) * 4;
+          // Consider the height map dimensions.
+          index = ((i * (this.terrainLOD + 1)) + j) * 4;
           offsetY1 = (raw[index] / 255) * 1.5 - 0.1;
-          index = (((i + 1) * this.terrainLOD) + j) * 4;
+          index = (((i + 1) * (this.terrainLOD + 1)) + j) * 4;
           offsetY2 = (raw[index] / 255) * 1.5 - 0.1;
-          index = (((i + 1) * this.terrainLOD) + (j + 1)) * 4;
+          index = (((i + 1) * (this.terrainLOD + 1)) + (j + 1)) * 4;
           offsetY3 = (raw[index] / 255) * 1.5 - 0.1;
-          index = ((i * this.terrainLOD) + (j + 1)) * 4;
+          index = ((i * (this.terrainLOD + 1)) + (j + 1)) * 4;
           offsetY4 = (raw[index] / 255) * 1.5 - 0.1;
 
           lookupOffset = offset;
           terrainPositions[offset++] = offsetX - 6;
-          terrainPositions[offset++] = offsetY1;
+          terrainPositions[offset++] = offsetY1 * heightOffset;
           terrainPositions[offset++] = offsetZ;
 
           terrainPositions[offset++] = offsetX + unit - 6;
-          terrainPositions[offset++] = offsetY2;
+          terrainPositions[offset++] = offsetY2 * heightOffset;
           terrainPositions[offset++] = offsetZ;
 
           terrainPositions[offset++] = offsetX + unit - 6;
-          terrainPositions[offset++] = offsetY3;
+          terrainPositions[offset++] = offsetY3 * heightOffset;
           terrainPositions[offset++] = offsetZ + unit;
 
           terrainPositions[offset++] = offsetX - 6;
-          terrainPositions[offset++] = offsetY4;
+          terrainPositions[offset++] = offsetY4 * heightOffset;
           terrainPositions[offset++] = offsetZ + unit;
 
         }

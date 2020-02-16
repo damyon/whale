@@ -5,6 +5,7 @@ class Trunk extends Drawable {
     super();
     this.treeLOD = 8;
     this.treeSize = 3;
+    this.treeOffset = 2.3;
     this.buffers = null;
   }
 
@@ -29,21 +30,21 @@ class Trunk extends Drawable {
     for (i = 0; i < this.treeLOD; i++) {
       offsetX = Math.sin(i * one) * this.treeSize / 24 + skew;
       offsetZ = Math.cos(i * one) * this.treeSize / 24 - skew;
-      offsetY = 0;
+      offsetY = this.treeOffset;
       treePositions[offset++] = offsetX;
       treePositions[offset++] = offsetY;
       treePositions[offset++] = offsetZ;
 
       offsetX = Math.sin((i + 1) * one) * this.treeSize / 24 + skew;
       offsetZ = Math.cos((i + 1) * one) * this.treeSize / 24 - skew;
-      offsetY = 0;
+      offsetY = this.treeOffset;
       treePositions[offset++] = offsetX;
       treePositions[offset++] = offsetY;
       treePositions[offset++] = offsetZ;
 
       offsetX = 0 + skew;
       offsetZ = 0 - skew;
-      offsetY = this.treeSize;
+      offsetY = this.treeOffset + this.treeSize;
       treePositions[offset++] = offsetX;
       treePositions[offset++] = offsetY;
       treePositions[offset++] = offsetZ;
