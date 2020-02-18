@@ -5,7 +5,7 @@ class Leaves2 extends Drawable {
     super();
     this.treeLOD = 16;
     this.treeSize = 3;
-    this.treeOffset = 2.3;
+    this.treeOffset = 3;
     this.buffers = null;
   }
 

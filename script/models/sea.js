@@ -115,7 +115,7 @@ class Sea extends Drawable {
     };
 
     // Load the texture.
-    this.loadTexture(gl, 'texture/water.jpg');
+    this.loadTexture(gl, 'texture/water.png');
 
     return this.buffers;
   }

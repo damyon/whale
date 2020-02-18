@@ -6,7 +6,7 @@ class Star extends Drawable {
     this.starLOD = 16;
     this.invert = invert?-1:1;
     this.starSize = 3;
-    this.starOffset = 2.5;
+    this.starOffset = 3;
     this.buffers = null;
   }
 

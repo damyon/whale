@@ -130,6 +130,45 @@ class Terrain extends Drawable {
     return this.buffers;
   }
 
+  spin(raw, size) {
+    let result = [], x = 0, y = 0, index = 0, indexr = 0;
+
+    for (x = 0; x < size; x++) {
+      for (y = size - 1; y >= 0; y--) {
+        index = (x + y * size) * 4;
+
+        result[indexr] = raw[index];
+        result[indexr + 1] = raw[index + 1];
+        result[indexr + 2] = raw[index + 2];
+        result[indexr + 3] = raw[index + 3];
+
+        indexr += 4; 
+      }
+    }
+
+    return result;
+  }
+
+  flip(raw, size) {
+    let result = [], x = 0, y = 0, index = 0, indexr = 0;
+
+    for (x = size - 1; x >= 0; x--) {
+      for (y = 0; y < size; y++) {
+        index = (x * size + y) * 4;
+
+        result[indexr] = raw[index];
+        result[indexr + 1] = raw[index + 1];
+        result[indexr + 2] = raw[index + 2];
+        result[indexr + 3] = raw[index + 3];
+
+        indexr += 4; 
+      }
+    }
+
+    return result;
+  }
+
+
   loadHeightmap(gl, filename) {
     const image = new Image();
     const canvas = document.createElement('canvas');
@@ -150,21 +189,25 @@ class Terrain extends Drawable {
       let heightMapDimensions = 512;
 
       one = - this.terrainSize;
-      // for (i = 0; i < this.terrainLOD; i++) {
-      //   for (j = 0; j < this.terrainLOD; j++) {
+      raw = this.flip(raw, this.terrainLOD + 1);
+      raw = this.spin(raw, this.terrainLOD + 1);
       for (i = this.terrainLOD - 1; i >= 0; i--) {
         for (j = this.terrainLOD - 1; j >= 0; j--) {
           offsetX = one + i * unit;
           offsetZ = one + j * unit;
 
           // Consider the height map dimensions.
-          index = ((i * (this.terrainLOD + 1)) + j) * 4;
-          offsetY1 = (raw[index] / 255) * 1.5 - 0.1;
-          index = (((i + 1) * (this.terrainLOD + 1)) + j) * 4;
-          offsetY2 = (raw[index] / 255) * 1.5 - 0.1;
-          index = (((i + 1) * (this.terrainLOD + 1)) + (j + 1)) * 4;
-          offsetY3 = (raw[index] / 255) * 1.5 - 0.1;
           index = ((i * (this.terrainLOD + 1)) + (j + 1)) * 4;
+          index = raw.length - index;
+          offsetY1 = (raw[index] / 255) * 1.5 - 0.1;
+          index = (((i + 1) * (this.terrainLOD + 1)) + (j + 1)) * 4;
+          index = raw.length - index;
+          offsetY2 = (raw[index] / 255) * 1.5 - 0.1;
+          index = (((i + 1) * (this.terrainLOD + 1)) + (j + 2)) * 4;
+          index = raw.length - index;
+          offsetY3 = (raw[index] / 255) * 1.5 - 0.1;
+          index = ((i * (this.terrainLOD + 1)) + (j + 2)) * 4;
+          index = raw.length - index;
           offsetY4 = (raw[index] / 255) * 1.5 - 0.1;
 
           lookupOffset = offset;
