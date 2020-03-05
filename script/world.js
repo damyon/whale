@@ -44,44 +44,11 @@ function main() {
   }
 
   /**
-   * Setting up our buffered data
-   */
-/*
-  // Set up the four corners of our floor quad so that
-  // we can draw the floor
-  var floorPositions = [
-    // Bottom Left (0)
-    -30.0, 0.0, 30.0,
-    // Bottom Right (1)
-    30.0, 0.0, 30.0,
-    // Top Right (2)
-    30.0, 0.0, -30.0,
-    // Top Left (3)
-    -30.0, 0.0, -30.0
-  ];
-  var floorIndices = [
-    // Front face
-    0, 1, 2, 0, 2, 3
-  ];
-*/
-
-  /**
    * Camera shader setup
    */
 
   // We enable our vertex attributes for our camera's shader.
   var vertexPositionAttrib = camera.getVertexPositionAttrib(gl);
-
-  /*
-  var floorPositionBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, floorPositionBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(floorPositions), gl.STATIC_DRAW);
-  gl.vertexAttribPointer(vertexPositionAttrib, 3, gl.FLOAT, false, 0, 0);
-
-  var floorIndexBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, floorIndexBuffer);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(floorIndices), gl.STATIC_DRAW);
-  */
 
   /**
    * Light shader setup
@@ -94,12 +61,6 @@ function main() {
   // We create an orthographic projection and view matrix from which our light
   // will view the scene
   camera.createLightViewMatrices(gl);
-
-  // gl.bindBuffer(gl.ARRAY_BUFFER, floorPositionBuffer);
-  // gl.vertexAttribPointer(vertexPositionAttrib, 3, gl.FLOAT, false, 0, 0);
-
-  // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, floorIndexBuffer);
-  // gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(floorIndices), gl.STATIC_DRAW);
 
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
@@ -131,14 +92,6 @@ function main() {
     var modelViewMatrix = mat4.create();
     mat4.multiply(modelViewMatrix, sceneCamera.cameraMatrix, modelViewMatrix);
     gl.uniformMatrix4fv(sceneCamera.uMVMatrix, false, modelViewMatrix);
-
-    /*
-    gl.bindBuffer(gl.ARRAY_BUFFER, floorPositionBuffer);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, floorIndexBuffer);
-    gl.vertexAttribPointer(vertexPositionAttrib, 3, gl.FLOAT, false, 0, 0);
-
-    gl.drawElements(gl.TRIANGLES, floorIndices.length, gl.UNSIGNED_SHORT, 0);
-    */
 
     gl.uniform3fv(sceneCamera.uColor, [1.0, 1.0, 0.8]);
     for (model of sceneDrawables) {

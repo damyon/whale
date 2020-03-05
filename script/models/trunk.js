@@ -5,7 +5,7 @@ class Trunk extends Drawable {
     super();
     this.treeLOD = 8;
     this.treeSize = 3;
-    this.treeOffset = 3;
+    this.treeOffset = 4;
     this.buffers = null;
   }
 

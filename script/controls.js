@@ -5,7 +5,7 @@ class Controls {
     // We set up controls so that we can drag our mouse or finger to adjust the rotation of
     // the camera about the X and Y axes
     this.canvasIsPressed = false;
-    this.xRotation = Math.PI / 20;
+    this.xRotation = Math.PI / 5;
     this.yRotation = 0;
     this.lastPressX;
     this.lastPressY;
