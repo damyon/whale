@@ -3,9 +3,10 @@ class Terrain extends Drawable {
 
   constructor() {
     super();
-    this.terrainSize = 40;
-    this.terrainLOD = 48;
+    this.terrainSize = 48;
+    this.terrainLOD = 64;
     this.buffers = null;
+    this.textureRepeat = 40;
   }
 
   /**
@@ -62,11 +63,13 @@ class Terrain extends Drawable {
     offset = 0;
 
     one = 1 / this.terrainLOD;
+    one *= this.textureRepeat;
 
     for (i = 0; i < this.terrainLOD; i++) {
       for (j = 0; j < this.terrainLOD; j++) {
         let left = i * one;
         let roof = j * one;
+
         terrainTextureCoordinates[offset++] = left + one; // X
         terrainTextureCoordinates[offset++] = roof + one; // Y
 
@@ -122,10 +125,10 @@ class Terrain extends Drawable {
 
     
     // Load the texture.
-    this.loadTexture(gl, 'texture/picquet.jpg');
+    this.loadTexture(gl, 'texture/sand.jpg');
 
     // Load the heightmap.
-    this.loadHeightmap(gl, 'texture/picquet-heightmap.png');
+    this.loadHeightmap(gl, 'texture/island-height.png');
 
     return this.buffers;
   }
@@ -300,17 +303,6 @@ class Terrain extends Drawable {
 
 
     // Set the shader uniforms
-
-/*
-    gl.uniformMatrix4fv(
-        programInfo.uniformLocations.projectionMatrix,
-        false,
-        matrices.projectionMatrix);
-    gl.uniformMatrix4fv(
-        programInfo.uniformLocations.modelViewMatrix,
-        false,
-        matrices.modelViewMatrix);
-*/
 
     // Specify the texture to map onto the faces.
 
