@@ -229,7 +229,6 @@ class Terrain extends Drawable {
           terrainPositions[offset++] = offsetX - 6;
           terrainPositions[offset++] = offsetY4 * heightOffset;
           terrainPositions[offset++] = offsetZ + unit;
-
         }
       }
 
@@ -307,16 +306,16 @@ class Terrain extends Drawable {
     // Specify the texture to map onto the faces.
 
     // Tell WebGL we want to affect texture unit 0
- //   if (!shadow) {
-      var uSampler = gl.getUniformLocation(shadow?camera.lightShaderProgram:camera.cameraShaderProgram, 'uSampler');
-      gl.activeTexture(gl.TEXTURE1);
 
-      // Bind the texture to texture unit 1
-      gl.bindTexture(gl.TEXTURE_2D, this.texture);
+    var uSampler = gl.getUniformLocation(shadow?camera.lightShaderProgram:camera.cameraShaderProgram, 'uSampler');
+    gl.activeTexture(gl.TEXTURE1);
 
-      // Tell the shader we bound the texture to texture unit 0
-      gl.uniform1i(uSampler, 1);
-   // }
+    // Bind the texture to texture unit 1
+    gl.bindTexture(gl.TEXTURE_2D, this.texture);
+
+    // Tell the shader we bound the texture to texture unit 0
+    gl.uniform1i(uSampler, 1);
+   
 
     {
       const vertexCount = 6 * (this.terrainLOD * this.terrainLOD);
