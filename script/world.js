@@ -35,7 +35,7 @@ function main() {
     new Leaves(),
     new Leaves2(),
     new Sea(),
-    new Rock(1, -1.5, 1),
+    new Rock(1, -0.5, 1),
     new Star(false),
     new Star(true)
   ];
