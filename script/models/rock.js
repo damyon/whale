@@ -90,7 +90,7 @@ class Rock extends Drawable {
 
       offsetX = 0 + skew + this.randOffset(this.index);
       offsetZ = 0 - skew + this.randOffset(offsetX);
-      offsetY = this.offset + this.size / 3 + this.randOffset(offsetX + offsetZ);
+      offsetY = this.offset + this.size / 8 + this.randOffset(offsetX + offsetZ);
       this.sourcePositions[offset++] = offsetX;
       this.sourcePositions[offset++] = offsetY;
       this.sourcePositions[offset++] = offsetZ;

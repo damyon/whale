@@ -34,12 +34,12 @@ function main() {
 
   let drawables = [
     terrain,
-    new Trunk(),
-    new Leaves(),
-    new Leaves2(),
+   // new Trunk(),
+   // new Leaves(),
+   // new Leaves2(),
     new Sea(),
-    new Star(false),
-    new Star(true)
+   // new Star(false),
+   // new Star(true)
   ];
 
   drawables = drawables.concat(rocks);
