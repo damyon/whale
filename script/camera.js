@@ -171,8 +171,15 @@ class Camera {
     this.cameraShaderProgram = gl.createProgram();
     gl.attachShader(this.cameraShaderProgram, this.cameraVertexShader);
     gl.attachShader(this.cameraShaderProgram, this.cameraFragmentShader);
+
     gl.linkProgram(this.cameraShaderProgram);
 
+    gl.detachShader(this.cameraShaderProgram, this.cameraVertexShader);
+    gl.deleteShader(this.cameraVertexShader);
+    
+    gl.detachShader(this.cameraShaderProgram, this.cameraFragmentShader);
+    gl.deleteShader(this.cameraFragmentShader);
+    
     this.lightVertexShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(this.lightVertexShader, this.lightVertexGLSL);
     gl.compileShader(this.lightVertexShader);
@@ -184,7 +191,14 @@ class Camera {
     this.lightShaderProgram = gl.createProgram();
     gl.attachShader(this.lightShaderProgram, this.lightVertexShader);
     gl.attachShader(this.lightShaderProgram, this.lightFragmentShader);
+    
     gl.linkProgram(this.lightShaderProgram);
+    
+    gl.detachShader(this.lightShaderProgram, this.lightVertexShader);
+    gl.deleteShader(this.lightVertexShader);
+
+    gl.detachShader(this.lightShaderProgram, this.lightFragmentShader);
+    gl.deleteShader(this.lightFragmentShader);
   }
 
   getVertexPositionAttrib(gl) {

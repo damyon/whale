@@ -7,6 +7,47 @@ class Terrain extends Drawable {
     this.terrainLOD = 64;
     this.buffers = null;
     this.textureRepeat = 40;
+    this.heightsLoaded = new Promise((resolve, reject) => {
+      this.heightsResolver = resolve;
+    });
+    this.rockDensity = 64;
+    this.rockSlope = 0.6;
+    this.rockPositions = [];
+  }
+
+  /**
+   * Chain a block of code to execute when the heights are loaded.
+   * 
+   * @param {Function} callback 
+   * @return {Promise}
+   */
+  afterHeightsLoaded(callback) {
+    return this.heightsLoaded.then(callback);
+  }
+
+  /**
+   * Create a list of rocks depending on the density of the terrain.
+   */
+  createRocks() {
+    let rocks = [], i = 0;
+
+    for (i = 0; i < this.rockDensity; i++) {
+      rocks.push(new Rock(i));
+    }
+
+    return rocks;
+  }
+
+  setRockPositions(gl, rocks) {
+    let i = 0;
+
+    for (i = 0; i < this.rockDensity && i < this.rockPositions.length; i++) {
+      let x = this.rockPositions[i].x,
+          y = this.rockPositions[i].y,
+          z = this.rockPositions[i].z;
+
+      rocks[i].setPosition(gl, x, y, z);
+    }
   }
 
   /**
@@ -229,12 +270,30 @@ class Terrain extends Drawable {
           terrainPositions[offset++] = offsetX - 6;
           terrainPositions[offset++] = offsetY4 * heightOffset;
           terrainPositions[offset++] = offsetZ + unit;
+
+          // Simple slope.
+          let aveOthers = (terrainPositions[lookupOffset + 4] + 
+            terrainPositions[lookupOffset + 7] +
+            terrainPositions[lookupOffset + 10]
+          ) / 3;
+          let slope = terrainPositions[lookupOffset + 1] - aveOthers;
+
+          slope = Math.abs(slope);
+          if (slope > this.rockSlope &&
+            aveOthers > 1.5 && 
+            this.rockPositions.length < this.rockDensity) {
+            this.rockPositions.push({
+              x: terrainPositions[lookupOffset],
+              y: terrainPositions[lookupOffset + 1],
+              z: terrainPositions[lookupOffset + 2]
+            })
+          }
         }
       }
-
+      
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(terrainPositions),
                     gl.STATIC_DRAW);
-      
+      this.heightsResolver(true);
     }.bind(this);
     image.src = filename;
   }

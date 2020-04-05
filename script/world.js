@@ -28,21 +28,30 @@ function main() {
 
   camera.buildShaders(gl);
   camera.useCameraShader(gl);
+  
+  let terrain = new Terrain();
+  let rocks = terrain.createRocks();
 
-  const drawables = [
-    new Terrain(),
+  let drawables = [
+    terrain,
     new Trunk(),
     new Leaves(),
     new Leaves2(),
     new Sea(),
-    new Rock(1, -0.5, 1),
     new Star(false),
     new Star(true)
   ];
 
+  drawables = drawables.concat(rocks);
+
   for (model of drawables) {
     model.initBuffers(gl);
   }
+
+  // Move the rock.
+  drawables[0].afterHeightsLoaded(function(gl, terrain, rocks) {
+    terrain.setRockPositions(gl, rocks);
+  }.bind(this, gl, terrain, rocks))
 
   /**
    * Camera shader setup
