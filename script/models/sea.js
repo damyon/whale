@@ -6,6 +6,7 @@ class Sea extends Drawable {
     this.seaLOD = 1;
     this.seaSize = 300;
     this.buffers = null;
+   // this.blend = 1;
   }
 
   /**

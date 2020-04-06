@@ -296,7 +296,7 @@ class Camera {
     gl.viewport(0, 0, gl.canvas.clientWidth, gl.canvas.clientHeight);
     gl.clearColor(0.48, 0.48, 0.98, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
+    
     // Create our camera view matrix
     this.cameraMatrix = mat4.create();
     mat4.translate(this.cameraMatrix, this.cameraMatrix, [0, 0, 20]);

@@ -7,12 +7,26 @@ class Drawable {
     this.positionX = 0;
     this.positionY = 0;
     this.positionZ = 0;
+    this.blend = 0;
   }
 
   initBuffers(gl) {
   }
 
   animateTextureCoordinates(gl, textureCoordBuffer, deltaTime) {
+  }
+
+  predraw(gl) {
+    if (this.blend) {
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);  
+    }
+  }
+
+  postdraw(gl) {
+    if (this.blend) {
+      gl.disable(gl.BLEND);
+    }
   }
 
   draw(gl) {

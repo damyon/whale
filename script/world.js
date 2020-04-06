@@ -31,6 +31,7 @@ function main() {
   
   let terrain = new Terrain();
   let rocks = terrain.createRocks();
+  let bushes = terrain.createBushes();
 
   let drawables = [
     terrain,
@@ -43,6 +44,7 @@ function main() {
   ];
 
   drawables = drawables.concat(rocks);
+  drawables = drawables.concat(bushes);
 
   for (model of drawables) {
     model.initBuffers(gl);
@@ -51,6 +53,7 @@ function main() {
   // Move the rock.
   drawables[0].afterHeightsLoaded(function(gl, terrain, rocks) {
     terrain.setRockPositions(gl, rocks);
+    terrain.setBushPositions(gl, bushes);
   }.bind(this, gl, terrain, rocks))
 
   /**
@@ -89,7 +92,9 @@ function main() {
     gl.uniformMatrix4fv(sceneCamera.shadowModelViewMatrix, false, modelViewMatrix);
     
     for (model of sceneDrawables) {
+      model.predraw(gl);
       model.draw(gl, sceneCamera, false, deltaTime, absTime);
+      model.postdraw(gl);
     }
 
     sceneCamera.finishShadowFrame(gl);
@@ -105,7 +110,9 @@ function main() {
 
     gl.uniform3fv(sceneCamera.uColor, [1.0, 1.0, 0.8]);
     for (model of sceneDrawables) {
+      model.predraw(gl);
       model.draw(gl, sceneCamera, true, deltaTime, absTime);
+      model.postdraw(gl);
     }
 
     sceneCamera.finishCameraFrame(gl);

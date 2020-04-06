@@ -13,6 +13,10 @@ class Terrain extends Drawable {
     this.rockDensity = 64;
     this.rockSlope = 0.6;
     this.rockPositions = [];
+    this.bushPositions = [];
+    this.bushDensity = 256;
+    this.bushMinHeight = 1;
+    this.bushSlope = 0.05;
   }
 
   /**
@@ -38,6 +42,19 @@ class Terrain extends Drawable {
     return rocks;
   }
 
+  /**
+   * Create a list of bushes depending on the density of the terrain.
+   */
+  createBushes() {
+    let bushes = [], i = 0;
+
+    for (i = 0; i < this.bushDensity; i++) {
+      bushes.push(new Bush(i));
+    }
+
+    return bushes;
+  }
+
   setRockPositions(gl, rocks) {
     let i = 0;
 
@@ -47,6 +64,18 @@ class Terrain extends Drawable {
           z = this.rockPositions[i].z;
 
       rocks[i].setPosition(gl, x, y, z);
+    }
+  }
+
+  setBushPositions(gl, bushes) {
+    let i = 0;
+
+    for (i = 0; i < this.bushDensity && i < this.bushPositions.length; i++) {
+      let x = this.bushPositions[i].x,
+          y = this.bushPositions[i].y,
+          z = this.bushPositions[i].z;
+
+      bushes[i].setPosition(gl, x, y, z);
     }
   }
 
@@ -280,13 +309,23 @@ class Terrain extends Drawable {
 
           slope = Math.abs(slope);
           if (slope > this.rockSlope &&
-            aveOthers > 1.5 && 
-            this.rockPositions.length < this.rockDensity) {
+              aveOthers > 1.5 && 
+              this.rockPositions.length < this.rockDensity) {
             this.rockPositions.push({
               x: terrainPositions[lookupOffset],
               y: terrainPositions[lookupOffset + 1],
               z: terrainPositions[lookupOffset + 2]
-            })
+            });
+          }
+
+          if (slope < this.bushSlope &&
+            terrainPositions[lookupOffset + 1] > this.bushMinHeight &&
+              this.bushPositions.length < this.bushDensity) {
+              this.bushPositions.push({
+              x: terrainPositions[lookupOffset],
+              y: terrainPositions[lookupOffset + 1],
+              z: terrainPositions[lookupOffset + 2]
+            });
           }
         }
       }
