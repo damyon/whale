@@ -2,6 +2,11 @@
 
 class Camera {
   constructor() {
+
+    this.x = 0;
+    this.y = 0;
+    this.z = 20;
+
     this.shadowDepthTextureSize = 1024;
     // We create a vertex shader from the light's point of view. You never see this in the
     // demo. It is used behind the scenes to create a texture that we can use to test testing whether
@@ -241,7 +246,7 @@ class Camera {
   }
 
   createLightViewMatrices(gl) {
-    this.lightProjectionMatrix = mat4.ortho([], -40, 40, -40, 40, -40.0, 80);
+    this.lightProjectionMatrix = mat4.ortho([], -80, 80, -80, 80, -80.0, 80);
     this.lightModelViewMatrix = mat4.lookAt([], 
       [0, 20, 10], // Light position
       [0, 0, 0], // Light target
@@ -299,7 +304,7 @@ class Camera {
     
     // Create our camera view matrix
     this.cameraMatrix = mat4.create();
-    mat4.translate(this.cameraMatrix, this.cameraMatrix, [0, 0, 20]);
+    mat4.translate(this.cameraMatrix, this.cameraMatrix, [controls.x, controls.y, controls.z]);
     var xRotMatrix = mat4.create();
     var yRotMatrix = mat4.create();
     mat4.rotateX(xRotMatrix, xRotMatrix, -controls.xRotation);

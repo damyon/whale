@@ -1,12 +1,13 @@
 
 class Sea extends Drawable {
 
-  constructor() {
+  constructor(scale, yoffset, blend) {
     super();
     this.seaLOD = 1;
-    this.seaSize = 300;
+    this.seaSize = scale;
+    this.yoffset = yoffset;
     this.buffers = null;
-   // this.blend = 1;
+    this.blend = blend;
   }
 
   /**
@@ -24,7 +25,7 @@ class Sea extends Drawable {
 
     // Now create an array of positions for the sea.
     const unit = this.seaSize / this.seaLOD;
-    let seaPositions = [], i = 0, j = 0, offset = 0, offsetX = 0, offsetY = 0, offsetZ = 0, one = 0, k = 0;
+    let seaPositions = [], i = 0, j = 0, offset = 0, offsetX = 0, offsetY = this.yoffset, offsetZ = 0, one = 0, k = 0;
     one = - this.seaSize/2;
     for (i = 0; i < this.seaLOD; i++) {
       for (j = 0; j < this.seaLOD; j++) {

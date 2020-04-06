@@ -35,12 +35,8 @@ function main() {
 
   let drawables = [
     terrain,
-   // new Trunk(),
-   // new Leaves(),
-   // new Leaves2(),
-    new Sea(),
-   // new Star(false),
-   // new Star(true)
+    new Sea(2000, -0.3, 0),
+    new Sea(300, 0, 1),
   ];
 
   drawables = drawables.concat(rocks);
@@ -92,9 +88,9 @@ function main() {
     gl.uniformMatrix4fv(sceneCamera.shadowModelViewMatrix, false, modelViewMatrix);
     
     for (model of sceneDrawables) {
-      model.predraw(gl);
+      //model.predraw(gl);
       model.draw(gl, sceneCamera, false, deltaTime, absTime);
-      model.postdraw(gl);
+      //model.postdraw(gl);
     }
 
     sceneCamera.finishShadowFrame(gl);
@@ -127,7 +123,7 @@ function main() {
     const deltaTime = now - then;
     then = now;
 
-    sceneControls.yRotation += 0.01 * deltaTime;
+    //sceneControls.yRotation += 0.01 * deltaTime;
     drawShadowMap(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);
     drawModels(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);
 

@@ -15,8 +15,8 @@ class Terrain extends Drawable {
     this.rockPositions = [];
     this.bushPositions = [];
     this.bushDensity = 256;
-    this.bushMinHeight = 1;
-    this.bushSlope = 0.05;
+    this.bushMinHeight = 0.2;
+    this.bushSlope = 0.01;
   }
 
   /**

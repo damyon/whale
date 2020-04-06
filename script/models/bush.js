@@ -4,8 +4,8 @@ class Bush extends Drawable {
     constructor(index) {
       super();
       this.LOD = 12;
-      this.size = 5;
-      this.offset = 1;
+      this.size = 7;
+      this.offset = 0.1;
       this.buffers = null;
       this.x = 0;
       this.y = 0;
@@ -20,7 +20,7 @@ class Bush extends Drawable {
   
     randOffset(seed) {
       let scale = 1;
-  
+        
       seed *= this.index;
       let m = 0x80000000;
       let a = 1103515245;
@@ -162,7 +162,7 @@ class Bush extends Drawable {
   
         offsetX = 0 + skew + this.randOffset(this.index);
         offsetZ = 0 - skew + this.randOffset(offsetX);
-        offsetY = this.offset - this.size*2 + this.randOffset(offsetX + offsetZ);
+        offsetY = this.offset + this.size / 16 + this.randOffset(offsetX + offsetZ);
         this.sourcePositions[offset++] = offsetX;
         this.sourcePositions[offset++] = offsetY;
         this.sourcePositions[offset++] = offsetZ;

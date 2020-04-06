@@ -7,6 +7,9 @@ class Controls {
     this.canvasIsPressed = false;
     this.xRotation = Math.PI / 5;
     this.yRotation = 0;
+    this.x = 80;
+    this.y = 20;
+    this.z = 20;
     this.lastPressX;
     this.lastPressY;
 
@@ -33,6 +36,28 @@ class Controls {
         this.lastPressY = e.pageY;
       }
     }.bind(this);
+
+
+    window.addEventListener('keydown', function (e) {
+      switch(e.keyCode) {
+        case 38:
+        case 87:
+            this.x += 1;
+          break;
+        case 83:
+        case 40:
+            this.x -= 1;
+          break;
+        case 65:
+        case 37:
+            this.z += 1;
+          break;
+        case 68:
+        case 39:
+            this.z -= 1;
+          break;
+      }
+    }.bind(this), false);
 
     // As you drag your finger we move the camera
     canvas.addEventListener('touchstart', function (e) {
