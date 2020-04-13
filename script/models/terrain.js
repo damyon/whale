@@ -14,9 +14,14 @@ class Terrain extends Drawable {
     this.rockSlope = 0.6;
     this.rockPositions = [];
     this.bushPositions = [];
+    this.treePositions = [];
     this.bushDensity = 256;
     this.bushMinHeight = 0.2;
     this.bushSlope = 0.01;
+    this.treeDensity = 256;
+    this.treeMinHeight = 2;
+    this.treeSlope = 0.3;
+   
   }
 
   /**
@@ -40,6 +45,31 @@ class Terrain extends Drawable {
     }
 
     return rocks;
+  }
+
+  /**
+   * Create a list of trees depending on the density of the terrain.
+   */
+  createTrees() {
+    let trees = [], i = 0;
+
+    for (i = 0; i < this.treeDensity; i++) {
+      trees.push(new Tree(i));
+    }
+
+    return trees;
+  }
+
+  setTreePositions(gl, trees) {
+    let i = 0;
+
+    for (i = 0; i < this.treeDensity && i < this.treePositions.length; i++) {
+      let x = this.treePositions[i].x,
+          y = this.treePositions[i].y,
+          z = this.treePositions[i].z;
+
+      trees[i].setPosition(gl, x, y, z);
+    }
   }
 
   /**
@@ -260,6 +290,7 @@ class Terrain extends Drawable {
       let lookupOffset = 0;
       let heightOffset = 4.0;
       let heightMapDimensions = 512;
+      let lastTreePosition = 0;
 
       one = - this.terrainSize;
       raw = this.flip(raw, this.terrainLOD + 1);
@@ -327,6 +358,18 @@ class Terrain extends Drawable {
               z: terrainPositions[lookupOffset + 2]
             });
           }
+
+          if (slope < this.treeSlope &&
+            terrainPositions[lookupOffset + 1] > this.treeMinHeight &&
+            this.treePositions.length < this.treeDensity && 
+            lookupOffset - lastTreePosition > 100) {
+          this.treePositions.push({
+            x: terrainPositions[lookupOffset],
+            y: terrainPositions[lookupOffset + 1],
+            z: terrainPositions[lookupOffset + 2]
+          });
+          lastTreePosition = lookupOffset;
+        }
         }
       }
       

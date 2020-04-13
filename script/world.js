@@ -32,6 +32,7 @@ function main() {
   let terrain = new Terrain();
   let rocks = terrain.createRocks();
   let bushes = terrain.createBushes();
+  let trees = terrain.createTrees();
 
   let drawables = [
     terrain,
@@ -41,6 +42,7 @@ function main() {
 
   drawables = drawables.concat(rocks);
   drawables = drawables.concat(bushes);
+  drawables = drawables.concat(trees);
 
   for (model of drawables) {
     model.initBuffers(gl);
@@ -50,6 +52,7 @@ function main() {
   drawables[0].afterHeightsLoaded(function(gl, terrain, rocks) {
     terrain.setRockPositions(gl, rocks);
     terrain.setBushPositions(gl, bushes);
+    terrain.setTreePositions(gl, trees);
   }.bind(this, gl, terrain, rocks))
 
   /**
