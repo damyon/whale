@@ -5,7 +5,7 @@ class Bush extends Drawable {
       super();
       this.LOD = 12;
       this.size = 7;
-      this.offset = 0.1;
+      this.offset = 0.3;
       this.buffers = null;
       this.x = 0;
       this.y = 0;
