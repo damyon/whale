@@ -8,11 +8,9 @@ class Controls {
     this.xRotation = -Math.PI / 5;
     this.yRotation = 0;
     this.xRotation = -Math.PI / 15;
-    this.x = -80;
-    this.y = -10;
-    this.z = -20;
-
+    
     this.x = 0;
+    this.y = -4;
     this.z = -70;
     this.lastPressX;
     this.lastPressY;

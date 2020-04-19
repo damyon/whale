@@ -33,13 +33,15 @@ function main() {
   let rocks = terrain.createRocks();
   let bushes = terrain.createBushes();
   let trees = terrain.createTrees();
+  let boat = new Boat();
 
   let drawables = [
     terrain,
     new Sea(2000, -0.3, 0),
     new Sea(300, 0, 1),
+    boat,
   ];
-
+  
   drawables = drawables.concat(rocks);
   drawables = drawables.concat(bushes);
   drawables = drawables.concat(trees);
@@ -48,6 +50,7 @@ function main() {
     model.initBuffers(gl);
   }
 
+  boat.setPosition(gl, 0, 12, 70);
   // Move the rock.
   drawables[0].afterHeightsLoaded(function(gl, terrain, rocks) {
     terrain.setRockPositions(gl, rocks);
@@ -125,8 +128,7 @@ function main() {
     now *= 0.01;  // convert to seconds
     const deltaTime = now - then;
     then = now;
-
-    //sceneControls.yRotation += 0.01 * deltaTime;
+    boat.setPosition(gl, -sceneControls.x - 0.8, 6, -sceneControls.z);
     drawShadowMap(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);
     drawModels(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);
 
