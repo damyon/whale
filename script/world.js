@@ -50,7 +50,7 @@ function main() {
     model.initBuffers(gl);
   }
 
-  boat.setPosition(gl, 0, 12, 70);
+  boat.setPositionRotation(gl, 0, 12, 70, 0);
   // Move the rock.
   drawables[0].afterHeightsLoaded(function(gl, terrain, rocks) {
     terrain.setRockPositions(gl, rocks);
@@ -128,7 +128,8 @@ function main() {
     now *= 0.01;  // convert to seconds
     const deltaTime = now - then;
     then = now;
-    boat.setPosition(gl, -sceneControls.x - 0.8, 6, -sceneControls.z);
+    boat.setPositionRotation(gl, -sceneControls.x - 0.8, 6 + (Math.sin(now / 10) / 10), -sceneControls.z, sceneControls.boatY);
+    
     drawShadowMap(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);
     drawModels(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);
 

@@ -4,7 +4,7 @@ class Tree extends Drawable {
   constructor() {
     super();
     this.trunk = new Trunk();
-    this.leaves = new Leaves(4);
+    this.leaves = new Leaves(4 * Math.random());
   }
 
   /**

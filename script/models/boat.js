@@ -21,7 +21,7 @@ class Boat extends Drawable {
    * Apply an offset to the position of all the vertices.
    *
    */
-  setPosition(gl, x, y, z) {
+  setPositionRotation(gl, x, y, z, rotate) {
     this.x = x;
     this.y = y;
     this.z = z;
@@ -29,7 +29,20 @@ class Boat extends Drawable {
     let translatedPositions = [];
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
     translatedPositions = this.sourcePositions.slice();
+
+    // Rotate my points!
     let i = 0;
+    let c = Math.cos(rotate);
+    let s = Math.sin(rotate);
+    
+    for (i = 0; i < this.vertexCount; i++) {
+      let x = translatedPositions[i * 3];
+      let z = translatedPositions[i * 3 + 2];
+
+      translatedPositions[i * 3] = x * c - z * s;
+      translatedPositions[i * 3 + 2] = x * s + z * c;
+    }
+    // Now move them.
     for (i = 0; i < this.vertexCount; i++) {
       translatedPositions[i * 3] += this.x;
       translatedPositions[i * 3 + 1] += this.y;

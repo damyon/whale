@@ -12,8 +12,14 @@ class Controls {
     this.x = 0;
     this.y = -4;
     this.z = -70;
+    this.boatY = 0;
     this.lastPressX;
     this.lastPressY;
+
+    this.actionForward = false;
+    this.actionBackward = false;
+    this.actionRight = false;
+    this.actionLeft = false;
 
     canvas.onmousedown = function (e) {
       this.canvasIsPressed = true;
@@ -39,42 +45,49 @@ class Controls {
       }
     }.bind(this);
 
+
     window.addEventListener('keydown', function (e) {
       switch(e.keyCode) {
         case 38:
         case 87:
-          var positionChange = this.moveForward();
-          
-          this.x -= positionChange[0];
-          //this.y += positionChange[1];
-          this.z += positionChange[2];
-          
+          this.actionForward = true;
           break;
         case 83:
         case 40:
-          var positionChange = this.moveForward();
-          
-          this.x += positionChange[0];
-          //this.y += positionChange[1];
-          this.z -= positionChange[2];
+          this.actionBackward = true;
           break;
         case 65:
         case 37:
-          var positionChange = this.moveForward();
-          // Flip the axis to make sideways move.
-          this.x += positionChange[2];
-          //this.y += positionChange[1];
-          this.z += positionChange[0];
+          this.actionLeft = true;
           break;
         case 68:
         case 39:
-          var positionChange = this.moveForward();
-          // Flip the axis to make sideways move.
-          this.x -= positionChange[2];
-          //this.y += positionChange[1];
-          this.z -= positionChange[0];
+          this.actionRight = true;
           break;
       }
+      this.processKeys();
+    }.bind(this), false);
+
+    window.addEventListener('keyup', function (e) {
+      switch(e.keyCode) {
+        case 38:
+        case 87:
+          this.actionForward = false;
+          break;
+        case 83:
+        case 40:
+          this.actionBackward = false;
+          break;
+        case 65:
+        case 37:
+          this.actionLeft = false;
+          break;
+        case 68:
+        case 39:
+          this.actionRight = false;
+          break;
+      }
+      
     }.bind(this), false);
 
     // As you drag your finger we move the camera
@@ -95,14 +108,36 @@ class Controls {
     }.bind(this));
   }
 
+  processKeys() {
+    if (this.actionForward) {
+      var positionChange = this.moveForward();
+          
+      this.x -= positionChange[0];
+      this.z += positionChange[2];
+    }
+    if (this.actionBackward) {
+      var positionChange = this.moveForward();
+          
+      this.x += positionChange[0];
+      this.z -= positionChange[2];
+    }
+    if (this.actionLeft) {
+      this.boatY -= 0.01;
+    }
+    if (this.actionRight) {
+      this.boatY += 0.01;
+    }
+
+  }
+
   moveForward() {
     var cameraMatrix = mat4.create();
     var xRotMatrix = mat4.create();
     var yRotMatrix = mat4.create();
     
-    mat4.rotateX(xRotMatrix, xRotMatrix, -this.xRotation);
-    mat4.rotateY(yRotMatrix, yRotMatrix, this.yRotation);
-    mat4.multiply(cameraMatrix, xRotMatrix, cameraMatrix);
+    //mat4.rotateX(xRotMatrix, xRotMatrix, -this.xRotation);
+    mat4.rotateY(yRotMatrix, yRotMatrix, this.boatY);
+    //mat4.multiply(cameraMatrix, xRotMatrix, cameraMatrix);
     mat4.multiply(cameraMatrix, yRotMatrix, cameraMatrix);
     mat4.invert(cameraMatrix, cameraMatrix);
 
