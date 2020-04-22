@@ -131,7 +131,6 @@ class Controls {
       let likelyZ = this.z + positionChange[2];
 
       let newDepth = terrain.mapHeight(likelyX, likelyZ);
-      console.log(newDepth);
       if (newDepth <= this.groundLimit) {
         this.x = likelyX;
         this.z = likelyZ;
