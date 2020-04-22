@@ -15,6 +15,7 @@ class Terrain extends Drawable {
     this.rockPositions = [];
     this.bushPositions = [];
     this.treePositions = [];
+    this.terrainPositions = [];
     this.bushDensity = 256;
     this.bushMinHeight = 0.2;
     this.bushSlope = 0.01;
@@ -124,28 +125,28 @@ class Terrain extends Drawable {
 
     // Now create an array of positions for the terrain.
     const unit = this.terrainSize / this.terrainLOD;
-    let terrainPositions = [], i = 0, j = 0, offset = 0, offsetX = 0, offsetY = 0, offsetZ = 0, one = 0, k = 0;
+    let i = 0, j = 0, offset = 0, offsetX = 0, offsetY = 0, offsetZ = 0, one = 0, k = 0;
     one = - this.terrainSize/2;
     for (i = 0; i < this.terrainLOD; i++) {
       for (j = 0; j < this.terrainLOD; j++) {
         offsetX = one + i * unit;
         offsetZ = one + j * unit;
 
-        terrainPositions[offset++] = offsetX;
-        terrainPositions[offset++] = offsetY;
-        terrainPositions[offset++] = offsetZ;
+        this.terrainPositions[offset++] = offsetX;
+        this.terrainPositions[offset++] = offsetY;
+        this.terrainPositions[offset++] = offsetZ;
 
-        terrainPositions[offset++] = offsetX + unit;
-        terrainPositions[offset++] = offsetY;
-        terrainPositions[offset++] = offsetZ;
+        this.terrainPositions[offset++] = offsetX + unit;
+        this.terrainPositions[offset++] = offsetY;
+        this.terrainPositions[offset++] = offsetZ;
 
-        terrainPositions[offset++] = offsetX + unit;
-        terrainPositions[offset++] = offsetY;
-        terrainPositions[offset++] = offsetZ + unit;
+        this.terrainPositions[offset++] = offsetX + unit;
+        this.terrainPositions[offset++] = offsetY;
+        this.terrainPositions[offset++] = offsetZ + unit;
 
-        terrainPositions[offset++] = offsetX;
-        terrainPositions[offset++] = offsetY;
-        terrainPositions[offset++] = offsetZ + unit;
+        this.terrainPositions[offset++] = offsetX;
+        this.terrainPositions[offset++] = offsetY;
+        this.terrainPositions[offset++] = offsetZ + unit;
       }
     }
 
@@ -153,7 +154,7 @@ class Terrain extends Drawable {
     // shape. We do this by creating a Float32Array from the
     // JavaScript array, then use it to fill the current buffer.
 
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(terrainPositions), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.terrainPositions), gl.STATIC_DRAW);
 
 
     const terrainTextureCoordBuffer = gl.createBuffer();
@@ -285,7 +286,7 @@ class Terrain extends Drawable {
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
       // Now create an array of positions for the terrain.
       const unit = 2 * this.terrainSize / this.terrainLOD;
-      let terrainPositions = [], i = 0, j = 0, offset = 0, offsetX = 0, offsetY1 = 0, offsetY2 = 0, offsetY3 = 0, offsetY4 = 0, offsetZ = 0, one = 0, index = 0;
+      let i = 0, j = 0, offset = 0, offsetX = 0, offsetY1 = 0, offsetY2 = 0, offsetY3 = 0, offsetY4 = 0, offsetZ = 0, one = 0, index = 0;
       let terrainNormals = [];
       let lookupOffset = 0;
       let heightOffset = 4.0;
@@ -315,69 +316,91 @@ class Terrain extends Drawable {
           offsetY4 = (raw[index] / 255) * 1.5 - 0.1;
 
           lookupOffset = offset;
-          terrainPositions[offset++] = offsetX - 6;
-          terrainPositions[offset++] = offsetY1 * heightOffset;
-          terrainPositions[offset++] = offsetZ;
+          this.terrainPositions[offset++] = offsetX - 6;
+          this.terrainPositions[offset++] = offsetY1 * heightOffset;
+          this.terrainPositions[offset++] = offsetZ;
 
-          terrainPositions[offset++] = offsetX + unit - 6;
-          terrainPositions[offset++] = offsetY2 * heightOffset;
-          terrainPositions[offset++] = offsetZ;
+          this.terrainPositions[offset++] = offsetX + unit - 6;
+          this.terrainPositions[offset++] = offsetY2 * heightOffset;
+          this.terrainPositions[offset++] = offsetZ;
 
-          terrainPositions[offset++] = offsetX + unit - 6;
-          terrainPositions[offset++] = offsetY3 * heightOffset;
-          terrainPositions[offset++] = offsetZ + unit;
+          this.terrainPositions[offset++] = offsetX + unit - 6;
+          this.terrainPositions[offset++] = offsetY3 * heightOffset;
+          this.terrainPositions[offset++] = offsetZ + unit;
 
-          terrainPositions[offset++] = offsetX - 6;
-          terrainPositions[offset++] = offsetY4 * heightOffset;
-          terrainPositions[offset++] = offsetZ + unit;
+          this.terrainPositions[offset++] = offsetX - 6;
+          this.terrainPositions[offset++] = offsetY4 * heightOffset;
+          this.terrainPositions[offset++] = offsetZ + unit;
 
           // Simple slope.
-          let aveOthers = (terrainPositions[lookupOffset + 4] + 
-            terrainPositions[lookupOffset + 7] +
-            terrainPositions[lookupOffset + 10]
+          let aveOthers = (this.terrainPositions[lookupOffset + 4] + 
+            this.terrainPositions[lookupOffset + 7] +
+            this.terrainPositions[lookupOffset + 10]
           ) / 3;
-          let slope = terrainPositions[lookupOffset + 1] - aveOthers;
+          let slope = this.terrainPositions[lookupOffset + 1] - aveOthers;
 
           slope = Math.abs(slope);
           if (slope > this.rockSlope &&
               aveOthers > 1.5 && 
               this.rockPositions.length < this.rockDensity) {
             this.rockPositions.push({
-              x: terrainPositions[lookupOffset],
-              y: terrainPositions[lookupOffset + 1],
-              z: terrainPositions[lookupOffset + 2]
+              x: this.terrainPositions[lookupOffset],
+              y: this.terrainPositions[lookupOffset + 1],
+              z: this.terrainPositions[lookupOffset + 2]
             });
           }
 
           if (slope < this.bushSlope &&
-            terrainPositions[lookupOffset + 1] > this.bushMinHeight &&
+            this.terrainPositions[lookupOffset + 1] > this.bushMinHeight &&
               this.bushPositions.length < this.bushDensity) {
-              this.bushPositions.push({
-              x: terrainPositions[lookupOffset],
-              y: terrainPositions[lookupOffset + 1],
-              z: terrainPositions[lookupOffset + 2]
+            this.bushPositions.push({
+              x: this.terrainPositions[lookupOffset],
+              y: this.terrainPositions[lookupOffset + 1],
+              z: this.terrainPositions[lookupOffset + 2]
             });
           }
 
           if (slope < this.treeSlope &&
-            terrainPositions[lookupOffset + 1] > this.treeMinHeight &&
-            this.treePositions.length < this.treeDensity && 
-            lookupOffset - lastTreePosition > 100) {
-          this.treePositions.push({
-            x: terrainPositions[lookupOffset],
-            y: terrainPositions[lookupOffset + 1],
-            z: terrainPositions[lookupOffset + 2]
-          });
-          lastTreePosition = lookupOffset;
-        }
+            this.terrainPositions[lookupOffset + 1] > this.treeMinHeight &&
+              this.treePositions.length < this.treeDensity && 
+              lookupOffset - lastTreePosition > 100) {
+            this.treePositions.push({
+              x: this.terrainPositions[lookupOffset],
+              y: this.terrainPositions[lookupOffset + 1],
+              z: this.terrainPositions[lookupOffset + 2]
+            });
+            lastTreePosition = lookupOffset;
+          }
         }
       }
       
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(terrainPositions),
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.terrainPositions),
                     gl.STATIC_DRAW);
       this.heightsResolver(true);
     }.bind(this);
     image.src = filename;
+  }
+
+  mapHeight(x, z) {
+    let one = - this.terrainSize;
+    const unit = 2 * this.terrainSize / this.terrainLOD;
+      
+    let offset = 0, offsetMatch = 0, i = 0, j = 0, offsetX = 0, offsetZ = 0;
+    for (i = this.terrainLOD - 1; i >= 0; i--) {
+      for (j = this.terrainLOD - 1; j >= 0; j--) {
+        offsetX = one + i * unit;
+        offsetZ = one + j * unit;
+        if ((x > offsetX && x < offsetX + unit) &&
+            (z > offsetZ && z < offsetZ + unit)) {
+          offsetMatch = offset;
+        }
+        offset += 12;
+      }
+    }
+    return (this.terrainPositions[offsetMatch + 1] + 
+      this.terrainPositions[offsetMatch + 4] + 
+      this.terrainPositions[offsetMatch + 7] + 
+      this.terrainPositions[offsetMatch + 10]) / 4;
   }
 
   /**

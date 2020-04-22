@@ -128,6 +128,8 @@ function main() {
     now *= 0.01;  // convert to seconds
     const deltaTime = now - then;
     then = now;
+    sceneCamera.setRock((Math.cos(now / 10) / 6));
+    sceneControls.processKeys(terrain);
     boat.setPositionRotation(gl, -sceneControls.x - 0.8, 6 + (Math.sin(now / 10) / 10), -sceneControls.z, sceneControls.boatY);
     
     drawShadowMap(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);

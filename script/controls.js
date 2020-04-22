@@ -12,6 +12,9 @@ class Controls {
     this.x = 0;
     this.y = -4;
     this.z = -70;
+    this.maxSpeed = 1;
+    this.forwardSpeed = 0;
+    this.groundLimit = -0.36;
     this.boatY = 0;
     this.lastPressX;
     this.lastPressY;
@@ -65,7 +68,7 @@ class Controls {
           this.actionRight = true;
           break;
       }
-      this.processKeys();
+      
     }.bind(this), false);
 
     window.addEventListener('keyup', function (e) {
@@ -108,18 +111,12 @@ class Controls {
     }.bind(this));
   }
 
-  processKeys() {
+  processKeys(terrain) {
     if (this.actionForward) {
-      var positionChange = this.moveForward();
-          
-      this.x -= positionChange[0];
-      this.z += positionChange[2];
+      this.forwardSpeed += 0.1;
     }
     if (this.actionBackward) {
-      var positionChange = this.moveForward();
-          
-      this.x += positionChange[0];
-      this.z -= positionChange[2];
+      this.forwardSpeed -= 0.1;
     }
     if (this.actionLeft) {
       this.boatY -= 0.01;
@@ -127,7 +124,20 @@ class Controls {
     if (this.actionRight) {
       this.boatY += 0.01;
     }
+    if (this.forwardSpeed) {
+      var positionChange = this.moveForward();
+          
+      let likelyX = this.x - positionChange[0];
+      let likelyZ = this.z + positionChange[2];
 
+      let newDepth = terrain.mapHeight(likelyX, likelyZ);
+      console.log(newDepth);
+      if (newDepth <= this.groundLimit) {
+        this.x = likelyX;
+        this.z = likelyZ;
+      }
+    }
+    this.forwardSpeed *= 0.9;
   }
 
   moveForward() {
@@ -141,7 +151,14 @@ class Controls {
     mat4.multiply(cameraMatrix, yRotMatrix, cameraMatrix);
     mat4.invert(cameraMatrix, cameraMatrix);
 
-    return [cameraMatrix[2], cameraMatrix[6], cameraMatrix[10]];
+    // Speed limit.
+    this.forwardSpeed = Math.min(this.forwardSpeed, 0.6);
+    this.forwardSpeed = Math.max(this.forwardSpeed, -0.6);
+    
+    return [cameraMatrix[2] * this.forwardSpeed,
+      cameraMatrix[6] * this.forwardSpeed,
+      cameraMatrix[10] * this.forwardSpeed
+    ];
   }
 
 }

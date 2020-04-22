@@ -157,6 +157,11 @@ class Camera {
     this.isWater = null;
     this.cameraMatrix = null;
     this.cameraNormalMatrix = null;
+    this.rock = 0;
+  }
+
+  setRock(rock) {
+    this.rock = rock;
   }
 
   buildShaders(gl) {
@@ -306,7 +311,7 @@ class Camera {
     mat4.rotateY(yRotMatrix, yRotMatrix, controls.yRotation);
     mat4.multiply(this.cameraMatrix, yRotMatrix, this.cameraMatrix);
     mat4.multiply(this.cameraMatrix, xRotMatrix, this.cameraMatrix);
-    mat4.translate(this.cameraMatrix, this.cameraMatrix, [controls.x, controls.y, controls.z]);
+    mat4.translate(this.cameraMatrix, this.cameraMatrix, [controls.x, controls.y + this.rock, controls.z]);
     //this.cameraMatrix = mat4.lookAt(this.cameraMatrix, [this.cameraMatrix[12], this.cameraMatrix[13], this.cameraMatrix[14]], [0, 0, 0], [0, 1, 0]);
 
     gl.uniform3fv(this.uColor, [0.0, 0.0, 0.0]);
