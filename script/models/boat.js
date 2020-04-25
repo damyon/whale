@@ -13,6 +13,9 @@ class Boat extends Drawable {
     this.y = 0;
     this.z = 0;
 
+    this.boatWidth = this.size / 2;
+    this.boatLength = this.size;
+
     this.vertexCount = this.LOD * 3 * 4;
     this.sourcePositions = [];
   }
@@ -35,6 +38,12 @@ class Boat extends Drawable {
     let c = Math.cos(rotate);
     let s = Math.sin(rotate);
     
+    // Move - half
+    for (i = 0; i < this.vertexCount; i++) {
+      translatedPositions[i * 3] -= this.boatWidth/2;
+      translatedPositions[i * 3 + 2] += this.boatLength/4;
+    }
+
     for (i = 0; i < this.vertexCount; i++) {
       let x = translatedPositions[i * 3];
       let z = translatedPositions[i * 3 + 2];
@@ -42,6 +51,13 @@ class Boat extends Drawable {
       translatedPositions[i * 3] = x * c - z * s;
       translatedPositions[i * 3 + 2] = x * s + z * c;
     }
+
+    // Move + half
+    for (i = 0; i < this.vertexCount; i++) {
+      translatedPositions[i * 3] += this.boatWidth/2;
+      translatedPositions[i * 3 + 2] -= this.boatLength/4;
+    }
+
     // Now move them.
     for (i = 0; i < this.vertexCount; i++) {
       translatedPositions[i * 3] += this.x;
@@ -71,6 +87,7 @@ class Boat extends Drawable {
     let i = 0, offset = 0, offsetX = 0, offsetY = this.size, offsetZ = 0, one = 0, k = 0,
     skew = 2;
     let skewX = 0.4;
+    let skewZ = this.boatLength / 2;
     one = (2 * Math.PI) / this.LOD;
     // Top
     for (i = 0; i < this.LOD; i++) {
@@ -79,21 +96,21 @@ class Boat extends Drawable {
       offsetY = this.offset - this.size;
       this.sourcePositions[offset++] = offsetX * skewX;
       this.sourcePositions[offset++] = offsetY;
-      this.sourcePositions[offset++] = offsetZ;
+      this.sourcePositions[offset++] = offsetZ + skewZ;
 
       offsetX = Math.sin((i + 1) * one) * this.size*0.9 + skew;
       offsetZ = Math.cos((i + 1) * one) * this.size*0.9 - skew;
       offsetY = this.offset - this.size;
       this.sourcePositions[offset++] = offsetX * skewX;
       this.sourcePositions[offset++] = offsetY;
-      this.sourcePositions[offset++] = offsetZ;
+      this.sourcePositions[offset++] = offsetZ + skewZ;
 
       offsetX = 0 + skew;
       offsetZ = 0 - skew;
       offsetY = this.offset - this.size * 1.5;
       this.sourcePositions[offset++] = offsetX * skewX;
       this.sourcePositions[offset++] = offsetY;
-      this.sourcePositions[offset++] = offsetZ;
+      this.sourcePositions[offset++] = offsetZ + skewZ;
     }
     // Side 1
     for (i = 0; i < this.LOD; i++) {
@@ -102,21 +119,21 @@ class Boat extends Drawable {
       offsetY = this.offset - this.size;
       this.sourcePositions[offset++] = offsetX * skewX;
       this.sourcePositions[offset++] = offsetY;
-      this.sourcePositions[offset++] = offsetZ;
+      this.sourcePositions[offset++] = offsetZ + skewZ;
 
       offsetX = Math.sin((i + 1) * one) * this.size + skew;
       offsetZ = Math.cos((i + 1) * one) * this.size - skew;
       offsetY = this.offset - this.size;
       this.sourcePositions[offset++] = offsetX * skewX;
       this.sourcePositions[offset++] = offsetY;
-      this.sourcePositions[offset++] = offsetZ;
+      this.sourcePositions[offset++] = offsetZ + skewZ;
 
       offsetX = Math.sin(i * one) * this.size*0.9 + skew;
       offsetZ = Math.cos(i * one) * this.size*0.9 - skew;
       offsetY = this.offset - this.size;
       this.sourcePositions[offset++] = offsetX * skewX;
       this.sourcePositions[offset++] = offsetY;
-      this.sourcePositions[offset++] = offsetZ;
+      this.sourcePositions[offset++] = offsetZ + skewZ;
     }
     // Side 2
     for (i = 0; i < this.LOD; i++) {
@@ -125,21 +142,21 @@ class Boat extends Drawable {
       offsetY = this.offset - this.size;
       this.sourcePositions[offset++] = offsetX * skewX;
       this.sourcePositions[offset++] = offsetY;
-      this.sourcePositions[offset++] = offsetZ;
+      this.sourcePositions[offset++] = offsetZ + skewZ;
 
       offsetX = Math.sin((i + 1) * one) * this.size*0.9 + skew;
       offsetZ = Math.cos((i + 1) * one) * this.size*0.9 - skew;
       offsetY = this.offset - this.size;
       this.sourcePositions[offset++] = offsetX * skewX;
       this.sourcePositions[offset++] = offsetY;
-      this.sourcePositions[offset++] = offsetZ;
+      this.sourcePositions[offset++] = offsetZ + skewZ;
 
       offsetX = Math.sin((i + 1) * one) * this.size + skew;
       offsetZ = Math.cos((i + 1) * one) * this.size - skew;
       offsetY = this.offset - this.size;
       this.sourcePositions[offset++] = offsetX * skewX;
       this.sourcePositions[offset++] = offsetY;
-      this.sourcePositions[offset++] = offsetZ;
+      this.sourcePositions[offset++] = offsetZ + skewZ;
     }
 
     // Bottom
@@ -149,21 +166,21 @@ class Boat extends Drawable {
       offsetY = this.offset - this.size;
       this.sourcePositions[offset++] = offsetX * skewX;
       this.sourcePositions[offset++] = offsetY;
-      this.sourcePositions[offset++] = offsetZ;
+      this.sourcePositions[offset++] = offsetZ + skewZ;
 
       offsetX = Math.sin((i + 1) * one) * this.size + skew;
       offsetZ = Math.cos((i + 1) * one) * this.size - skew;
       offsetY = this.offset - this.size;
       this.sourcePositions[offset++] = offsetX * skewX;
       this.sourcePositions[offset++] = offsetY;
-      this.sourcePositions[offset++] = offsetZ;
+      this.sourcePositions[offset++] = offsetZ + skewZ;
 
       offsetX = 0 + skew;
       offsetZ = 0 - skew;
       offsetY = this.offset - this.size*1.6;
       this.sourcePositions[offset++] = offsetX * skewX;
       this.sourcePositions[offset++] = offsetY;
-      this.sourcePositions[offset++] = offsetZ;
+      this.sourcePositions[offset++] = offsetZ + skewZ;
     }
 
     // Now pass the list of positions into WebGL to build the

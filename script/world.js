@@ -123,13 +123,31 @@ function main() {
   var then = 0;
   var absTime = 0;
 
+  function resize() {
+    // Lookup the size the browser is displaying the canvas.
+    var displayWidth  = canvas.clientWidth;
+    var displayHeight = canvas.clientHeight;
+   
+    // Check if the canvas is not the same size.
+    if (canvas.width  != displayWidth ||
+        canvas.height != displayHeight) {
+   
+      // Make the canvas the same size
+      canvas.width  = displayWidth;
+      canvas.height = displayHeight;
+    }
+  }
+
   // Draw our shadow map and light map every request animation frame
   function draw(sceneCamera, sceneControls, sceneDrawables, now) {
     now *= 0.01;  // convert to seconds
     const deltaTime = now - then;
     then = now;
-    sceneCamera.setRock((Math.cos(now / 10) / 6));
-    sceneControls.processKeys(terrain);
+
+    resize();
+
+    sceneCamera.setRock(-(Math.sin((now / 10) - 0.2) / 6));
+    sceneControls.processKeys(terrain, boat.boatWidth, boat.boatLength);
     boat.setPositionRotation(gl, -sceneControls.x - 0.8, 6 + (Math.sin(now / 10) / 10), -sceneControls.z, sceneControls.boatY);
     
     drawShadowMap(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);
