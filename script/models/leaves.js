@@ -19,7 +19,7 @@ class Leaves extends Drawable {
   }
 
   randOffset(seed) {
-    let scale = 3;
+    let scale = 2;
       
     seed *= this.index;
     let m = 0x80000000;
