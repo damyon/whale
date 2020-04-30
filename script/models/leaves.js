@@ -19,7 +19,7 @@ class Leaves extends Drawable {
   }
 
   randOffset(seed) {
-    let scale = 1;
+    let scale = 3;
       
     seed *= this.index;
     let m = 0x80000000;
@@ -240,7 +240,9 @@ class Leaves extends Drawable {
   draw(gl, camera, shadow) {
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute
-    gl.uniform1i(camera.isWater, 0);
+    if (shadow) {
+      gl.uniform1i(camera.isWater, 0);
+    }
     {
       const numComponents = 3;
       const type = gl.FLOAT;

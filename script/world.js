@@ -33,6 +33,7 @@ function main() {
   let rocks = terrain.createRocks();
   let bushes = terrain.createBushes();
   let trees = terrain.createTrees();
+  let foam = terrain.createFoam();
   let boat = new Boat();
 
   let drawables = [
@@ -45,6 +46,8 @@ function main() {
   drawables = drawables.concat(rocks);
   drawables = drawables.concat(bushes);
   drawables = drawables.concat(trees);
+  drawables = drawables.concat(foam);
+  
 
   for (model of drawables) {
     model.initBuffers(gl);
@@ -56,6 +59,7 @@ function main() {
     terrain.setRockPositions(gl, rocks);
     terrain.setBushPositions(gl, bushes);
     terrain.setTreePositions(gl, trees);
+    terrain.setFoamPositions(gl, foam);
   }.bind(this, gl, terrain, rocks))
 
   /**
@@ -145,7 +149,7 @@ function main() {
     then = now;
 
     resize();
-
+    terrain.setFoamPositions(gl, foam);
     sceneCamera.setRock(-(Math.sin((now / 10) - 0.2) / 6));
     sceneControls.processKeys(terrain, boat.boatWidth, boat.boatLength);
     boat.setPositionRotation(gl, -sceneControls.x - 0.8, 6 + (Math.sin(now / 10) / 10), -sceneControls.z, sceneControls.boatY);

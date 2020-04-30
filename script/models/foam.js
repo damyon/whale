@@ -1,26 +1,65 @@
 
-class Bush extends Drawable {
+class Foam extends Drawable {
 
     constructor(index) {
-      super();
-      this.LOD = 12;
-      this.size = 7;
-      this.offset = 0.3;
-      this.buffers = null;
-      this.x = 0;
-      this.y = 0;
-      this.z = 0;
-  
-      this.vertexCount = this.LOD * 3 * 4;
-      this.sourcePositions = [];
-      this.index = index + 1;
-      this.blend = 1;
-      this.size -= this.randOffset(index);
+        super();
+        this.LOD = 32;
+        this.animatedScale = 1;
+        this.size = 12;
+        this.offset = 0;
+        this.buffers = null;
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
+
+        this.vertexCount = this.LOD * 3 * 3;
+        this.sourcePositions = [];
+        this.index = index + 1;
+        this.blend = 1;
     }
+
+    /**
+   * animateTextureCoordinates
+   * Make ripples and waves by adjusting the texture coordinates with a sine wave.
+   *
+   * @param gl
+   * @param textureCoordBuffer
+   * @param absTime
+   */
+  animateTextureCoordinates(gl, textureCoordBuffer, absTime) {
+    
+    const loopDelay = 0.1;
+    const loopDelay2 = 0.5;
+    const loopDelay3 = 0.3;
+    const fastRand = absTime / 5 + this.index;
+    absTime /= 30;
+
+    const animation = (Math.sin(absTime * loopDelay) + 1);
+    const animation2 = (Math.sin(absTime * loopDelay2) + 1);
+    // Set the texture coordinates.
+   // const textureCoordBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
+
+    let textureCoordinates = [];
+    let offset = 0, i = 0;
+    let offset2 = 0;
+  
+  
+    for (i = 0; i < this.vertexCount; i++) {
+      
+      textureCoordinates[offset++] = this.sourcePositions[offset2++] / this.size + animation; // X
+      offset2++;
+      textureCoordinates[offset++] = this.sourcePositions[offset2++] / this.size + animation2; // Z
+    }
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
+                  gl.STATIC_DRAW);
+    this.animatedScale = Math.sin(fastRand) / 5 + 0.8;
+  }
   
     randOffset(seed) {
-      let scale = 2;
-        
+      let scale = 0.1;
+  
       seed *= this.index;
       let m = 0x80000000;
       let a = 1103515245;
@@ -47,6 +86,10 @@ class Bush extends Drawable {
       translatedPositions = this.sourcePositions.slice();
       let i = 0;
       for (i = 0; i < this.vertexCount; i++) {
+        translatedPositions[i * 3] *= this.animatedScale;
+        translatedPositions[i * 3 + 1] *= this.animatedScale;
+        translatedPositions[i * 3 + 2] *= this.animatedScale;
+
         translatedPositions[i * 3] += this.x;
         translatedPositions[i * 3 + 1] += this.y;
         translatedPositions[i * 3 + 2] += this.z;
@@ -92,7 +135,7 @@ class Bush extends Drawable {
   
         offsetX = 0 + skew + this.randOffset(this.index);
         offsetZ = 0 - skew + this.randOffset(offsetX);
-        offsetY = this.offset + this.size / 16 + this.randOffset(offsetX + offsetZ);
+        offsetY = this.offset + this.size / 18 + this.randOffset(offsetX + offsetZ);
         this.sourcePositions[offset++] = offsetX;
         this.sourcePositions[offset++] = offsetY;
         this.sourcePositions[offset++] = offsetZ;
@@ -144,30 +187,6 @@ class Bush extends Drawable {
         this.sourcePositions[offset++] = offsetZ;
       }
   
-      // Bottom
-      for (i = 0; i < this.LOD; i++) {
-        offsetX = Math.sin(i * one) * this.size + skew + this.randOffset(this.index);
-        offsetZ = Math.cos(i * one) * this.size - skew + this.randOffset(offsetX);
-        offsetY = this.offset - this.size + this.randOffset(offsetX + offsetZ);
-        this.sourcePositions[offset++] = offsetX;
-        this.sourcePositions[offset++] = offsetY;
-        this.sourcePositions[offset++] = offsetZ;
-  
-        offsetX = Math.sin((i + 1) * one) * this.size + skew + this.randOffset(this.index);
-        offsetZ = Math.cos((i + 1) * one) * this.size - skew + this.randOffset(offsetX);
-        offsetY = this.offset - this.size + this.randOffset(offsetX + offsetZ);
-        this.sourcePositions[offset++] = offsetX;
-        this.sourcePositions[offset++] = offsetY;
-        this.sourcePositions[offset++] = offsetZ;
-  
-        offsetX = 0 + skew + this.randOffset(this.index);
-        offsetZ = 0 - skew + this.randOffset(offsetX);
-        offsetY = this.offset + this.size / 16 + this.randOffset(offsetX + offsetZ);
-        this.sourcePositions[offset++] = offsetX;
-        this.sourcePositions[offset++] = offsetY;
-        this.sourcePositions[offset++] = offsetZ;
-      }
-  
       // Now pass the list of positions into WebGL to build the
       // shape. We do this by creating a Float32Array from the
       // JavaScript array, then use it to fill the current buffer.
@@ -182,19 +201,10 @@ class Bush extends Drawable {
     
       let offset2 = 0;
       for (i = 0; i < this.vertexCount; i++) {
-        textureCoordinates[offset++] = (this.sourcePositions[offset2++] / (this.size * 3)) + 0.5; // X
+        skew = 0;
+        textureCoordinates[offset++] = this.sourcePositions[offset2++] / this.size + skew; // X
         offset2++;
-        textureCoordinates[offset++] = (this.sourcePositions[offset2++] / (this.size * 3)) + 0.5; // Z
-      }
-      for (i = 0; i < this.vertexCount*2; i++) {
-        if (textureCoordinates[i] < 0) {
-          textureCoordinates[i] = 0;
-            console.log('bad clip 1');
-        }
-        if (textureCoordinates[i] > 1) {
-          textureCoordinates[i] = 1;
-          console.log('bad clip 2');
-        }
+        textureCoordinates[offset++] = this.sourcePositions[offset2++] / this.size + skew; // Z
       }
   
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
@@ -226,7 +236,7 @@ class Bush extends Drawable {
       };
   
       // Load the texture.
-      this.loadTexture(gl, 'texture/bush.png');
+      this.loadTexture(gl, 'texture/foam.png');
   
       return this.buffers;
     }
@@ -236,8 +246,11 @@ class Bush extends Drawable {
      * Draw the rock.
      * @param gl
      * @param camera
+     * @param shadow
+     * @param deltaTime
+     * @param absTime
      */
-    draw(gl, camera, shadow) {
+    draw(gl, camera, shadow, deltaTime, absTime) {
       // Tell WebGL how to pull out the positions from the position
       // buffer into the vertexPosition attribute
       if (shadow) {
@@ -274,6 +287,9 @@ class Bush extends Drawable {
         const offset = 0;
   
         const textureCoord = gl.getAttribLocation(camera.cameraShaderProgram, 'aTextureCoord');
+        
+        this.animateTextureCoordinates(gl, this.buffers.textureCoord, absTime);
+
         gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.textureCoord);
         gl.vertexAttribPointer(
             textureCoord,
@@ -306,6 +322,7 @@ class Bush extends Drawable {
         const offset = 0;
         gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
       }
+  
     }
   }
   

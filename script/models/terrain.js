@@ -15,6 +15,7 @@ class Terrain extends Drawable {
     this.rockPositions = [];
     this.bushPositions = [];
     this.treePositions = [];
+    this.foamPositions = [];
     this.terrainPositions = [];
     this.bushDensity = 256;
     this.bushMinHeight = 0.2;
@@ -22,6 +23,9 @@ class Terrain extends Drawable {
     this.treeDensity = 24;
     this.treeMinHeight = 4;
     this.treeSlope = 0.3;
+    this.foamDensity = 64;
+    this.foamMinHeight = -0.3;
+    this.foamMaxHeight = 0.1;
    
   }
 
@@ -49,6 +53,19 @@ class Terrain extends Drawable {
   }
 
   /**
+   * Create a list of foam depending on the density of the terrain.
+   */
+  createFoam() {
+    let foam = [], i = 0;
+
+    for (i = 0; i < this.foamDensity; i++) {
+      foam.push(new Foam(i));
+    }
+
+    return foam;
+  }
+
+  /**
    * Create a list of trees depending on the density of the terrain.
    */
   createTrees() {
@@ -59,6 +76,18 @@ class Terrain extends Drawable {
     }
 
     return trees;
+  }
+
+  setFoamPositions(gl, foam) {
+    let i = 0;
+
+    for (i = 0; i < this.foamDensity && i < this.foamPositions.length; i++) {
+      let x = this.foamPositions[i].x,
+          y = this.foamPositions[i].y,
+          z = this.foamPositions[i].z;
+
+      foam[i].setPosition(gl, x, y, z);
+    }
   }
 
   setTreePositions(gl, trees) {
@@ -371,6 +400,16 @@ class Terrain extends Drawable {
             });
             lastTreePosition = lookupOffset;
           }
+
+          if (this.terrainPositions[lookupOffset + 1] > this.foamMinHeight &&
+              this.terrainPositions[lookupOffset + 1] < this.foamMaxHeight &&
+              this.foamPositions.length < this.foamDensity) {
+            this.foamPositions.push({
+              x: this.terrainPositions[lookupOffset],
+              y: this.terrainPositions[lookupOffset + 1],
+              z: this.terrainPositions[lookupOffset + 2]
+            });
+          }
         }
       }
       
@@ -416,7 +455,10 @@ class Terrain extends Drawable {
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute
-    gl.uniform1i(camera.isWater, 0);
+    if (shadow) {
+      gl.uniform1i(camera.isWater, 0);
+    }
+
     {
       const numComponents = 3;
       const type = gl.FLOAT;
@@ -478,7 +520,9 @@ class Terrain extends Drawable {
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
 
     // Tell the shader we bound the texture to texture unit 0
-    gl.uniform1i(uSampler, 1);
+    if (shadow) {
+      gl.uniform1i(uSampler, 1);
+    }
    
 
     {

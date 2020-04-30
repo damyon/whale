@@ -181,7 +181,10 @@ class Sea extends Drawable {
   draw(gl, camera, shadow, deltaTime, absTime) {
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute
-    gl.uniform1i(camera.isWater, 1);
+    if (shadow) {
+      gl.uniform1i(camera.isWater, 1);
+    }
+
     {
       const numComponents = 3;
       const type = gl.FLOAT;
