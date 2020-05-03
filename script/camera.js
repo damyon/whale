@@ -277,7 +277,8 @@ class Camera {
 
     gl.uniformMatrix4fv(this.uLightMatrix, false, this.lightModelViewMatrix);
     gl.uniformMatrix4fv(this.uLightProjection, false, this.lightProjectionMatrix);
-    gl.uniformMatrix4fv(this.uPMatrix, false, mat4.perspective([], Math.PI / 3, 1, 0.01, 900));
+    let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    gl.uniformMatrix4fv(this.uPMatrix, false, mat4.perspective([], aspect, 1, 0.01, 2000));
   }
 
   prepareShadowFrame(gl) {

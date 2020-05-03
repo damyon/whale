@@ -35,11 +35,15 @@ function main() {
   let trees = terrain.createTrees();
   let foam = terrain.createFoam();
   let boat = new Boat();
+  let cloud1 = new Cloud();
+  let cloud2 = new Cloud();
 
   let drawables = [
     terrain,
     new Sea(2000, -0.3, 0),
     new Sea(300, 0, 1),
+    cloud1,
+    cloud2,
     boat,
   ];
   
@@ -52,6 +56,9 @@ function main() {
   for (model of drawables) {
     model.initBuffers(gl);
   }
+
+  cloud1.setPosition(gl, 100, 900, -1180);
+  cloud2.setPosition(gl, -100, 900, 1180);
 
   boat.setPositionRotation(gl, 0, 12, 70, 0);
   // Move the rock.
