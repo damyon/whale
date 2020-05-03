@@ -1,9 +1,9 @@
 
-class Cloud extends Drawable {
+class Shark extends Drawable {
 
     constructor(rotate) {
       super();
-      this.size = 512;
+      this.size = 6;
       this.offset = 1;
       this.buffers = null;
       this.x = 0;
@@ -11,10 +11,59 @@ class Cloud extends Drawable {
       this.z = 0;
       this.rotate = rotate;
   
+      this.width = 1;
+      this.length = this.size;
       this.blend = 1;
       this.vertexCount = 3 * 2;
       this.sourcePositions = [];
     }
+
+    setPositionRotation(gl, x, y, z, rotate) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    
+        let translatedPositions = [];
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
+        translatedPositions = this.sourcePositions.slice();
+    
+        // Rotate my points!
+        let i = 0;
+        let c = Math.cos(rotate);
+        let s = Math.sin(rotate);
+        
+        // Move - half
+        for (i = 0; i < this.vertexCount; i++) {
+          translatedPositions[i * 3] -= this.width/2;
+          translatedPositions[i * 3 + 2] += this.length/4;
+        }
+
+        // Now move them.
+        for (i = 0; i < this.vertexCount; i++) {
+          translatedPositions[i * 3] += this.x;
+          translatedPositions[i * 3 + 1] += this.y;
+          translatedPositions[i * 3 + 2] += this.z;
+        }
+    
+        for (i = 0; i < this.vertexCount; i++) {
+          let x = translatedPositions[i * 3];
+          let z = translatedPositions[i * 3 + 2];
+    
+          translatedPositions[i * 3] = x * c - z * s;
+          translatedPositions[i * 3 + 2] = x * s + z * c;
+        }
+    
+        // Move + half
+        for (i = 0; i < this.vertexCount; i++) {
+          translatedPositions[i * 3] += this.width/2;
+          translatedPositions[i * 3 + 2] -= this.length/4;
+        }
+    
+        
+    
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(translatedPositions), gl.STATIC_DRAW);
+        
+      }
   
     /**
      * Apply an offset to the position of all the vertices.
@@ -180,12 +229,9 @@ class Cloud extends Drawable {
       };
   
       // Load the texture.
-      if (this.rotate) {
-        this.loadTexture(gl, 'texture/cloud2.png');
-      } else {
-        this.loadTexture(gl, 'texture/cloud.png');
-      }
-  
+      
+      this.loadTexture(gl, 'texture/shark.png');
+      
       return this.buffers;
     }
   

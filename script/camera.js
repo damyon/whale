@@ -3,7 +3,7 @@
 class Camera {
   constructor() {
 
-    this.shadowDepthTextureSize = 1024;
+    this.shadowDepthTextureSize = 4096;
     // We create a vertex shader from the light's point of view. You never see this in the
     // demo. It is used behind the scenes to create a texture that we can use to test testing whether
     // or not a point is inside of our outside of the shadow
@@ -88,7 +88,7 @@ class Camera {
       uniform sampler2D depthColorTexture;
       uniform sampler2D uSampler;
       uniform vec3 uColor;
-      uniform bool isWater;
+      uniform int isWater;
 
       float decodeFloat (vec4 color) {
         const vec4 bitShift = vec4(
@@ -128,8 +128,10 @@ class Camera {
         }
         amountInLight /= 49.0;
 
-        if (isWater) {
+        if (isWater == 1) {
           amountInLight = 0.5;
+        } else if (isWater == 2) {
+          amountInLight = 1.9;
         }
 
         // gl_FragColor = vec4((amountInLight * uColor) + vLighting, 1.0);
@@ -278,7 +280,7 @@ class Camera {
     gl.uniformMatrix4fv(this.uLightMatrix, false, this.lightModelViewMatrix);
     gl.uniformMatrix4fv(this.uLightProjection, false, this.lightProjectionMatrix);
     let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-    gl.uniformMatrix4fv(this.uPMatrix, false, mat4.perspective([], aspect, 1, 0.01, 2000));
+    gl.uniformMatrix4fv(this.uPMatrix, false, mat4.perspective([], aspect, 1, 0.01, 3000));
   }
 
   prepareShadowFrame(gl) {
@@ -313,8 +315,7 @@ class Camera {
     mat4.multiply(this.cameraMatrix, yRotMatrix, this.cameraMatrix);
     mat4.multiply(this.cameraMatrix, xRotMatrix, this.cameraMatrix);
     mat4.translate(this.cameraMatrix, this.cameraMatrix, [controls.x, controls.y + this.rock, controls.z]);
-    //this.cameraMatrix = mat4.lookAt(this.cameraMatrix, [this.cameraMatrix[12], this.cameraMatrix[13], this.cameraMatrix[14]], [0, 0, 0], [0, 1, 0]);
-
+    
     gl.uniform3fv(this.uColor, [0.0, 0.0, 0.0]);
 
     gl.activeTexture(gl.TEXTURE0);
