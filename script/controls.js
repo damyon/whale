@@ -11,7 +11,7 @@ class Controls {
     
     this.x = 0;
     this.y = -4;
-    this.z = -200;
+    this.z = -100;
     this.maxSpeed = 1;
     this.forwardSpeed = 0;
     this.groundLimit = -0.36;
