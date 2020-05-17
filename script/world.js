@@ -43,6 +43,7 @@ function main() {
   let shark2 = new Shark();
   let shark3 = new Shark();
   let shark4 = new Shark();
+  let dhufish = new Dhufish();
   
   let drawables = [
     terrain,
@@ -53,6 +54,7 @@ function main() {
     cloud3,
     cloud4,
     boat,
+    dhufish,
    // shark1,
    // shark2,
    // shark3,
@@ -80,10 +82,11 @@ function main() {
   shark2.setPositionRotation(gl, 0, -5, 80, 0);
   shark3.setPositionRotation(gl, 0, -5, 80, 0);
   shark4.setPositionRotation(gl, 0, -5, 80, 0);
-
+  dhufish.setPosition(gl, 0, -1, 78);
+    
   boat.setPositionRotation(gl, 0, 12, 70, 0);
   // Move the rock.
-  drawables[0].afterHeightsLoaded(function(gl, terrain, rocks) {
+  terrain.afterHeightsLoaded(function(gl, terrain, rocks) {
     terrain.setRockPositions(gl, rocks);
     terrain.setBushPositions(gl, bushes);
     terrain.setTreePositions(gl, trees);
@@ -126,9 +129,7 @@ function main() {
     gl.uniformMatrix4fv(sceneCamera.shadowModelViewMatrix, false, modelViewMatrix);
     
     for (model of sceneDrawables) {
-      //model.predraw(gl);
       model.draw(gl, sceneCamera, false, deltaTime, absTime);
-      //model.postdraw(gl);
     }
 
     sceneCamera.finishShadowFrame(gl);
@@ -184,6 +185,7 @@ function main() {
       sceneDrawables.push(shark3);
       sceneDrawables.push(shark4);
     }
+
     terrain.setFoamPositions(gl, foam);
     sceneCamera.setRock(-(Math.sin((now / 10) - 0.2) / 6));
     sceneControls.processKeys(terrain, boat.boatWidth, boat.boatLength);
