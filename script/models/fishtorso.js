@@ -3,8 +3,8 @@ class FishTorso extends Drawable {
 
     constructor() {
       super();
-      this.size = 5;
-      this.LOD = 48;
+      this.size = 3.5;
+      this.LOD = 32;
       this.fat = 0.6;
       this.buffers = null;
       this.textureLoaded = new Promise((resolve, reject) => {

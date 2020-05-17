@@ -10,7 +10,7 @@ class Controls {
     this.xRotation = -Math.PI / 15;
     
     this.x = 0;
-    this.y = -4;
+    this.y = -6;
     this.z = -100;
     this.maxSpeed = 1;
     this.forwardSpeed = 0;
@@ -195,9 +195,7 @@ class Controls {
     var xRotMatrix = mat4.create();
     var yRotMatrix = mat4.create();
     
-    //mat4.rotateX(xRotMatrix, xRotMatrix, -this.xRotation);
     mat4.rotateY(yRotMatrix, yRotMatrix, this.boatY);
-    //mat4.multiply(cameraMatrix, xRotMatrix, cameraMatrix);
     mat4.multiply(cameraMatrix, yRotMatrix, cameraMatrix);
     mat4.invert(cameraMatrix, cameraMatrix);
 

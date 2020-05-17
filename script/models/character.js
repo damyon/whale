@@ -14,9 +14,9 @@ class Character extends Drawable {
    *
    */
   setPosition(gl, x, y, z) {
-    this.main.setPosition(gl, x, y + 5, z);
+    this.main.setPosition(gl, x, y, z);
     this.members.forEach(function(element, index, source) {
-      element.setPosition(gl, x, y + 5, z)
+      element.setPosition(gl, x, y, z)
     });
   }
 

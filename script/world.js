@@ -47,14 +47,14 @@ function main() {
   
   let drawables = [
     terrain,
-    new Sea(2000, -0.3, 0),
+    dhufish,
+    new Sea(2000, -2.3, 0),
     new Sea(300, 0, 1),
     cloud1,
     cloud2,
     cloud3,
     cloud4,
     boat,
-    dhufish,
    // shark1,
    // shark2,
    // shark3,
@@ -82,7 +82,7 @@ function main() {
   shark2.setPositionRotation(gl, 0, -5, 80, 0);
   shark3.setPositionRotation(gl, 0, -5, 80, 0);
   shark4.setPositionRotation(gl, 0, -5, 80, 0);
-  dhufish.setPosition(gl, 0, -1, 78);
+  dhufish.setPosition(gl, -10, -2.5, 78);
     
   boat.setPositionRotation(gl, 0, 12, 70, 0);
   // Move the rock.
