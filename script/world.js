@@ -82,7 +82,7 @@ function main() {
   shark2.setPositionRotation(gl, 0, -5, 80, 0);
   shark3.setPositionRotation(gl, 0, -5, 80, 0);
   shark4.setPositionRotation(gl, 0, -5, 80, 0);
-  dhufish.setPosition(gl, -10, -2.5, 78);
+  dhufish.setPosition(gl, 10, -1.8, 78);
     
   boat.setPositionRotation(gl, 0, 12, 70, 0);
   // Move the rock.

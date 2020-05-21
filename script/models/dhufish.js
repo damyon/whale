@@ -6,6 +6,6 @@ class Dhufish extends Character {
     super();
 
     this.main = new FishTorso();
-    //this.members = [new Member()];
+    this.members = [new FishTail()];
   }
 }

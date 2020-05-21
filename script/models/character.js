@@ -15,19 +15,24 @@ class Character extends Drawable {
    */
   setPosition(gl, x, y, z) {
     this.main.setPosition(gl, x, y, z);
-    this.members.forEach(function(element, index, source) {
+    let element = null;
+
+    for (element of this.members) {
       element.setPosition(gl, x, y, z)
-    });
+    }
   }
 
   initBuffers(gl) {
     this.main.initBuffers(gl);
+    let element = null;
+
     for (element of this.members) {
       element.initBuffers(gl);
     }
   }
 
-  draw(gl, camera, shadow) {
+  draw(gl, camera, shadow, deltaTime, absTime) {
+    let element = null;
     if (shadow) {
       this.main.predraw(gl);
       for (element of this.members) {
@@ -35,9 +40,9 @@ class Character extends Drawable {
       }
       
     }
-    this.main.draw(gl, camera, shadow);
+    this.main.draw(gl, camera, shadow, deltaTime, absTime);
     for (element of this.members) {
-      element.draw(gl, camera, shadow);
+      element.draw(gl, camera, shadow, deltaTime, absTime);
     };
     if (shadow) {
       this.main.postdraw(gl);

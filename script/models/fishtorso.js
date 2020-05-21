@@ -4,7 +4,7 @@ class FishTorso extends Drawable {
     constructor() {
       super();
       this.size = 3.5;
-      this.LOD = 32;
+      this.LOD = 42;
       this.fat = 0.6;
       this.buffers = null;
       this.textureLoaded = new Promise((resolve, reject) => {
@@ -231,7 +231,7 @@ class FishTorso extends Drawable {
         const unit = 2 * this.size / this.LOD;
         let i = 0, j = 0, k = 0, offset = 0, offsetX = 0, offsetZ1 = 0, offsetZ2 = 0, offsetZ3 = 0, offsetZ4 = 0, offsetY = 0, one = 0, index = 0;
         let row = 0, splat = 0;
-        let heightOffset = this.fat, clipLimit = 0.1, clampLimit = 0.3, inverse = 1;
+        let heightOffset = this.fat, clipLimit = 0.2, clampLimit = 0.3, inverse = 1;
         
         one = - this.size;
         raw = this.flip(raw, this.LOD + 1);
@@ -273,7 +273,7 @@ class FishTorso extends Drawable {
                 }
               } else {
                 needsSplat.push(offset);
-                this.positions[offset++] = -this.size;
+                this.positions[offset++] = -2*this.size;
                 this.positions[offset++] = 0;
                 this.positions[offset++] = 0;
               }
@@ -291,7 +291,7 @@ class FishTorso extends Drawable {
                 }
               } else {
                 needsSplat.push(offset);
-                this.positions[offset++] = -this.size;
+                this.positions[offset++] = -2*this.size;
                 this.positions[offset++] = 0;
                 this.positions[offset++] = 0;
               }
@@ -309,7 +309,7 @@ class FishTorso extends Drawable {
                 }
               } else {
                 needsSplat.push(offset);
-                this.positions[offset++] = -this.size;
+                this.positions[offset++] = -2*this.size;
                 this.positions[offset++] = 0;
                 this.positions[offset++] = 0;
               }
@@ -327,7 +327,7 @@ class FishTorso extends Drawable {
                 }
               } else {
                 needsSplat.push(offset);
-                this.positions[offset++] = -this.size;
+                this.positions[offset++] = -2*this.size;
                 this.positions[offset++] = 0;
                 this.positions[offset++] = 0;
               }
