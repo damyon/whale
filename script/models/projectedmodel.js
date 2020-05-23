@@ -8,6 +8,7 @@ class ProjectedModel extends Drawable {
     this.y = 0;
     this.z = 0;
     this.angle = 0;
+    this.globalAngle = 0;
     this.clipLimit = 0.1;
     this.clampLimit = 0.2;
     this.buffers = null;
@@ -37,22 +38,33 @@ class ProjectedModel extends Drawable {
     this.y = y;
     this.z = z;
 
-    let translatedPositions = [];
+    let translatedPositions = [], i = 0, c = 0, s = 0;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
     translatedPositions = this.positions.slice();
 
-    // First we rotate.
-
-    let i = 0;
-    let c = Math.cos(this.angle);
-    let s = Math.sin(this.angle);
+    // Now locally rotate.
+    c = Math.cos(this.angle);
+    s = Math.sin(this.angle);
     
     // Move - half
     for (i = 0; i < this.vertexCount; i++) {
       translatedPositions[i * 3] += 1.75*this.size;
-      //translatedPositions[i * 3 + 2] += this.boatLength/4;
     }
 
+    // Local rotate
+    for (i = 0; i < this.vertexCount; i++) {
+      let x = translatedPositions[i * 3];
+      let z = translatedPositions[i * 3 + 2];
+
+      translatedPositions[i * 3] = x * c - z * s;
+      translatedPositions[i * 3 + 2] = x * s + z * c;
+    }
+    
+    // Now global rotation.
+    c = Math.cos(this.globalAngle);
+    s = Math.sin(this.globalAngle);
+
+    // Global rotate
     for (i = 0; i < this.vertexCount; i++) {
       let x = translatedPositions[i * 3];
       let z = translatedPositions[i * 3 + 2];
@@ -64,9 +76,10 @@ class ProjectedModel extends Drawable {
     // Move + half
     for (i = 0; i < this.vertexCount; i++) {
       translatedPositions[i * 3] -= 1.75*this.size;
-      //translatedPositions[i * 3 + 2] += this.boatLength/4;
     }
 
+    
+    // Now translate.
     for (i = 0; i < this.vertexCount; i++) {
       translatedPositions[i * 3] += this.x;
       translatedPositions[i * 3 + 1] += this.y;
@@ -79,6 +92,11 @@ class ProjectedModel extends Drawable {
   setPositionRotation(gl, x, y, z, angle) {
     this.angle = angle;
     this.setPosition(gl, x, y, z);
+  }
+
+  setGlobalRotation(gl, globalAngle) {
+    this.globalAngle = globalAngle;
+    this.setPosition(gl, this.x, this.y, this.z);
   }
 
   setWaveRotation(gl, offset) {

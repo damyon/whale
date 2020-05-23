@@ -22,6 +22,15 @@ class Character extends Drawable {
     }
   }
 
+  setGlobalRotation(gl, angle) {
+    this.main.setGlobalRotation(gl, angle);
+    let element = null;
+
+    for (element of this.members) {
+      element.setGlobalRotation(gl, angle);
+    }
+  }
+
   initBuffers(gl) {
     this.main.initBuffers(gl);
     let element = null;

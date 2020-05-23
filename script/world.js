@@ -83,7 +83,7 @@ function main() {
   shark3.setPositionRotation(gl, 0, -5, 80, 0);
   shark4.setPositionRotation(gl, 0, -5, 80, 0);
   dhufish.setPosition(gl, 10, -1.8, 78);
-    
+
   boat.setPositionRotation(gl, 0, 12, 70, 0);
   // Move the rock.
   terrain.afterHeightsLoaded(function(gl, terrain, rocks) {
@@ -197,6 +197,8 @@ function main() {
     drawShadowMap(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);
     drawModels(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);
 
+    dhufish.setGlobalRotation(gl, absTime / 100);
+   
     absTime += deltaTime;
     window.requestAnimationFrame(draw.bind(this, sceneCamera, sceneControls, sceneDrawables));
   }
