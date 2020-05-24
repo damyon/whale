@@ -101,7 +101,7 @@ class ProjectedModel extends Drawable {
 
   setWaveRotation(gl, offset) {
 
-    let angle = Math.sin(offset * 0.1) / 2;
+    let angle = Math.sin(offset * 0.2) / 2;
     
     this.setPositionRotation(gl, this.x, this.y, this.z, angle);
   }

@@ -197,8 +197,6 @@ function main() {
     drawShadowMap(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);
     drawModels(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);
 
-    dhufish.setGlobalRotation(gl, absTime / 100);
-   
     absTime += deltaTime;
     window.requestAnimationFrame(draw.bind(this, sceneCamera, sceneControls, sceneDrawables));
   }
