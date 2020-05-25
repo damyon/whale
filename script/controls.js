@@ -18,8 +18,7 @@ class Controls {
     this.boatY = 0;
     this.lastPressX;
     this.lastPressY;
-    this.keywordProgress = 0;
-
+   
     this.actionForward = false;
     this.actionBackward = false;
     this.actionRight = false;
@@ -55,68 +54,15 @@ class Controls {
         case 87:
           this.actionForward = true;
           break;
-        case 83:
-          if (this.keywordProgress == 3) {
-            this.keywordProgress++;
-          }
-          if (this.keywordProgress == 5) {
-            this.keywordProgress++;
-          }
-          if (this.keywordProgress == 8) {
-            this.keywordProgress++;
-          }
         case 40:
           this.actionBackward = true;
           break;
-        case 65:
-          if (this.keywordProgress == 9) {
-            this.keywordProgress++;
-          }
         case 37:
           this.actionLeft = true;
           break;
         case 68:
         case 39:
           this.actionRight = true;
-          break;
-        case 84:
-          if (this.keywordProgress == 0) {
-            this.keywordProgress++;
-          }
-          break;
-        case 72:
-          if (this.keywordProgress == 1) {
-            this.keywordProgress++;
-          }
-          break;
-        case 73:
-          if (this.keywordProgress == 2) {
-            this.keywordProgress++;
-          }
-          if (this.keywordProgress == 4) {
-            this.keywordProgress++;
-          }
-          break;
-        case 85:
-          if (this.keywordProgress == 6) {
-            this.keywordProgress++;
-          }
-          break;
-        case 78:
-          if (this.keywordProgress == 7) {
-            this.keywordProgress++;
-          }
-          break;
-        case 70:
-          if (this.keywordProgress == 9) {
-            this.keywordProgress++;
-          }
-          break;
-        case 69:
-          if (this.keywordProgress == 10) {
-            this.keywordProgress = -1;
-            this.createSharks = true;
-          }
           break;
       }
       

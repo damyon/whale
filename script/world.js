@@ -55,10 +55,10 @@ function main() {
     cloud3,
     cloud4,
     boat,
-   // shark1,
-   // shark2,
-   // shark3,
-   // shark4
+    shark1,
+    shark2,
+    shark3,
+    shark4
   ];
   
   drawables = drawables.concat(rocks);
@@ -178,14 +178,7 @@ function main() {
     then = now;
 
     resize();
-    if (sceneControls.createSharks) {
-      sceneControls.createSharks = false;
-      sceneDrawables.push(shark1);
-      sceneDrawables.push(shark2);
-      sceneDrawables.push(shark3);
-      sceneDrawables.push(shark4);
-    }
-
+   
     terrain.setFoamPositions(gl, foam);
     sceneCamera.setRock(-(Math.sin((now / 10) - 0.2) / 6));
     sceneControls.processKeys(terrain, boat.boatWidth, boat.boatLength);
