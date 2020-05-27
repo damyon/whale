@@ -255,6 +255,8 @@ class Foam extends Drawable {
       // buffer into the vertexPosition attribute
       if (shadow) {
         gl.uniform1i(camera.isWater, 0);
+      } else {
+        return;
       }
 
       {

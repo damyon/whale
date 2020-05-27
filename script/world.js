@@ -46,8 +46,7 @@ function main() {
     terrain,
     dhufish,
     shark,
-    new Sea(2000, -2.3, 0),
-    new Sea(300, 0, 1),
+    new Sea(1000, 0, 1),
     cloud1,
     cloud2,
     cloud3,
@@ -69,7 +68,7 @@ function main() {
   cloud2.setPosition(gl, -100, 400, 1280);
   cloud3.setPosition(gl, -1280, 400, 100);
   cloud4.setPosition(gl, 1280, 400, -100);
-  shark.setPosition(gl, 5, -1, 76);
+  shark.setPosition(gl, 5, -0.5, 76);
   dhufish.setPosition(gl, 10, -1.8, 78);
 
   boat.setPositionRotation(gl, 0, 12, 70, 0);

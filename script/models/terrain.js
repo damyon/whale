@@ -3,7 +3,7 @@ class Terrain extends Drawable {
 
   constructor() {
     super();
-    this.terrainSize = 48;
+    this.terrainSize = 64;
     this.terrainLOD = 64;
     this.buffers = null;
     this.textureRepeat = 40;
@@ -214,6 +214,15 @@ class Terrain extends Drawable {
       }
     }
 
+    terrainTextureCoordinates[0] = 30;
+    terrainTextureCoordinates[1] = 30;
+    terrainTextureCoordinates[2] = 0;
+    terrainTextureCoordinates[3] = 30;
+    terrainTextureCoordinates[4] = 0;
+    terrainTextureCoordinates[5] = 0;
+    terrainTextureCoordinates[6] = 30;
+    terrainTextureCoordinates[7] = 0;
+
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(terrainTextureCoordinates),
                   gl.STATIC_DRAW);
 
@@ -318,7 +327,8 @@ class Terrain extends Drawable {
       let i = 0, j = 0, offset = 0, offsetX = 0, offsetY1 = 0, offsetY2 = 0, offsetY3 = 0, offsetY4 = 0, offsetZ = 0, one = 0, index = 0;
       let terrainNormals = [];
       let lookupOffset = 0;
-      let heightOffset = 4.0;
+      let heightOffset = -2;
+      let heightScale = 6;
       let heightMapDimensions = 512;
       let lastTreePosition = 0;
 
@@ -346,19 +356,19 @@ class Terrain extends Drawable {
 
           lookupOffset = offset;
           this.terrainPositions[offset++] = offsetX - 6;
-          this.terrainPositions[offset++] = offsetY1 * heightOffset;
+          this.terrainPositions[offset++] = offsetY1 * heightScale + heightOffset;
           this.terrainPositions[offset++] = offsetZ;
 
           this.terrainPositions[offset++] = offsetX + unit - 6;
-          this.terrainPositions[offset++] = offsetY2 * heightOffset;
+          this.terrainPositions[offset++] = offsetY2 * heightScale + heightOffset;
           this.terrainPositions[offset++] = offsetZ;
 
           this.terrainPositions[offset++] = offsetX + unit - 6;
-          this.terrainPositions[offset++] = offsetY3 * heightOffset;
+          this.terrainPositions[offset++] = offsetY3 * heightScale + heightOffset;
           this.terrainPositions[offset++] = offsetZ + unit;
 
           this.terrainPositions[offset++] = offsetX - 6;
-          this.terrainPositions[offset++] = offsetY4 * heightOffset;
+          this.terrainPositions[offset++] = offsetY4 * heightScale + heightOffset;
           this.terrainPositions[offset++] = offsetZ + unit;
 
           // Simple slope.
@@ -412,6 +422,22 @@ class Terrain extends Drawable {
           }
         }
       }
+
+      this.terrainPositions[0] = -450;
+      this.terrainPositions[1] = -2.5;
+      this.terrainPositions[2] = -450;
+      
+      this.terrainPositions[3] = 450;
+      this.terrainPositions[4] = -2.5;
+      this.terrainPositions[5] = -450;
+      
+      this.terrainPositions[6] = 450;
+      this.terrainPositions[7] = -2.5;
+      this.terrainPositions[8] = 450;
+      
+      this.terrainPositions[9] = -450;
+      this.terrainPositions[10] = -2.5;
+      this.terrainPositions[11] = 450;
       
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.terrainPositions),
                     gl.STATIC_DRAW);

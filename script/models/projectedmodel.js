@@ -10,6 +10,7 @@ class ProjectedModel extends Drawable {
     this.angle = 0;
     this.globalAngle = 0;
     this.pivotOffset = 0;
+    this.centerOffset = 0;
     this.clipLimit = 0.1;
     this.clampLimit = 0.2;
     this.buffers = null;
@@ -332,7 +333,7 @@ class ProjectedModel extends Drawable {
               }
             } else {
               needsSplat.push(offset);
-              this.positions[offset++] = -2*this.size;
+              this.positions[offset++] = -2*this.size - this.centerOffset;
               this.positions[offset++] = 0;
               this.positions[offset++] = 0;
             }
@@ -350,7 +351,7 @@ class ProjectedModel extends Drawable {
               }
             } else {
               needsSplat.push(offset);
-              this.positions[offset++] = -2*this.size;
+              this.positions[offset++] = -2*this.size - this.centerOffset;
               this.positions[offset++] = 0;
               this.positions[offset++] = 0;
             }
@@ -368,7 +369,7 @@ class ProjectedModel extends Drawable {
               }
             } else {
               needsSplat.push(offset);
-              this.positions[offset++] = -2*this.size;
+              this.positions[offset++] = -2*this.size - this.centerOffset;
               this.positions[offset++] = 0;
               this.positions[offset++] = 0;
             }
@@ -386,16 +387,18 @@ class ProjectedModel extends Drawable {
               }
             } else {
               needsSplat.push(offset);
-              this.positions[offset++] = -2*this.size;
+              this.positions[offset++] = -2*this.size - this.centerOffset;
               this.positions[offset++] = 0;
               this.positions[offset++] = 0;
             }
 
             if (nonZeroCandidate) {
-              for (splat of needsSplat) {
-                this.positions[splat] = this.positions[nonZeroCandidate];
-                this.positions[splat+1] = this.positions[nonZeroCandidate+1];
-                this.positions[splat+2] = 0;
+              if (needsSplat.length == 4) {
+                for (splat of needsSplat) {
+                  this.positions[splat] = this.positions[nonZeroCandidate];
+                  this.positions[splat+1] = this.positions[nonZeroCandidate+1];
+                  this.positions[splat+2] = 0;
+                }
               }
             }
 

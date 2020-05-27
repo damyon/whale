@@ -138,9 +138,9 @@ class Sea extends Drawable {
     const loopDelay3 = 0.3;
     absTime /= 30;
 
-    const animation = (Math.sin(absTime * loopDelay) + 1) / 48;
-    const animation2 = (Math.sin(absTime * loopDelay2) + 1) / 38;
-    const animation3 = (Math.sin(absTime * loopDelay3) + 1) / 28;
+    const animation = ((absTime * loopDelay) + 1) / 48;
+    const animation2 = ((absTime * loopDelay2) + 1) / 38;
+    const animation3 = ((absTime * loopDelay3) + 1) / 28;
     gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
 
     let seaTextureCoordinates = [];
@@ -183,6 +183,8 @@ class Sea extends Drawable {
     // buffer into the vertexPosition attribute
     if (shadow) {
       gl.uniform1i(camera.isWater, 1);
+    } else {
+      return;
     }
 
     {

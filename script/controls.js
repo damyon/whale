@@ -54,9 +54,11 @@ class Controls {
         case 87:
           this.actionForward = true;
           break;
+        case 83:
         case 40:
           this.actionBackward = true;
           break;
+        case 65:
         case 37:
           this.actionLeft = true;
           break;
