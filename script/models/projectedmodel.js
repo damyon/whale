@@ -9,6 +9,7 @@ class ProjectedModel extends Drawable {
     this.z = 0;
     this.angle = 0;
     this.globalAngle = 0;
+    this.pivotOffset = 0;
     this.clipLimit = 0.1;
     this.clampLimit = 0.2;
     this.buffers = null;
@@ -48,7 +49,7 @@ class ProjectedModel extends Drawable {
     
     // Move - half
     for (i = 0; i < this.vertexCount; i++) {
-      translatedPositions[i * 3] += 1.75*this.size;
+      translatedPositions[i * 3] += 1.75*this.size + this.pivotOffset;
     }
 
     // Local rotate
@@ -75,7 +76,7 @@ class ProjectedModel extends Drawable {
     
     // Move + half
     for (i = 0; i < this.vertexCount; i++) {
-      translatedPositions[i * 3] -= 1.75*this.size;
+      translatedPositions[i * 3] -= 1.75*this.size + this.pivotOffset;
     }
 
     

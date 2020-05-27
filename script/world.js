@@ -39,26 +39,20 @@ function main() {
   let cloud2 = new Cloud(false);
   let cloud3 = new Cloud(true);
   let cloud4 = new Cloud(true);
-  let shark1 = new Shark();
-  let shark2 = new Shark();
-  let shark3 = new Shark();
-  let shark4 = new Shark();
+  let shark = new Shark();
   let dhufish = new Dhufish();
   
   let drawables = [
     terrain,
     dhufish,
+    shark,
     new Sea(2000, -2.3, 0),
     new Sea(300, 0, 1),
     cloud1,
     cloud2,
     cloud3,
     cloud4,
-    boat,
-    shark1,
-    shark2,
-    shark3,
-    shark4
+    boat
   ];
   
   drawables = drawables.concat(rocks);
@@ -69,19 +63,13 @@ function main() {
   for (model of drawables) {
     model.initBuffers(gl);
   }
-  shark1.initBuffers(gl);
-  shark2.initBuffers(gl);
-  shark3.initBuffers(gl);
-  shark4.initBuffers(gl);
-
+  shark.initBuffers(gl);
+  
   cloud1.setPosition(gl, 100, 400, -1280);
   cloud2.setPosition(gl, -100, 400, 1280);
   cloud3.setPosition(gl, -1280, 400, 100);
   cloud4.setPosition(gl, 1280, 400, -100);
-  shark1.setPositionRotation(gl, 0, -5, 80, 0);
-  shark2.setPositionRotation(gl, 0, -5, 80, 0);
-  shark3.setPositionRotation(gl, 0, -5, 80, 0);
-  shark4.setPositionRotation(gl, 0, -5, 80, 0);
+  shark.setPosition(gl, 5, -1, 76);
   dhufish.setPosition(gl, 10, -1.8, 78);
 
   boat.setPositionRotation(gl, 0, 12, 70, 0);
@@ -183,10 +171,10 @@ function main() {
     sceneCamera.setRock(-(Math.sin((now / 10) - 0.2) / 6));
     sceneControls.processKeys(terrain, boat.boatWidth, boat.boatLength);
     boat.setPositionRotation(gl, -sceneControls.x - 0.8, 6 + (Math.sin(now / 10) / 10), -sceneControls.z, sceneControls.boatY);
-    shark1.setPositionRotation(gl, - 0.8, -2, - 80, now / 100);
-    shark2.setPositionRotation(gl, - 0.8, -2, - 80, now / 100 + Math.PI / 2);
-    shark3.setPositionRotation(gl, - 0.8, -2, - 80, now / 100 + Math.PI);
-    shark4.setPositionRotation(gl, - 0.8, -2, - 80, now / 100 + 3 * Math.PI / 2);
+    //shark1.setPositionRotation(gl, - 0.8, -2, - 80, now / 100);
+    //shark2.setPositionRotation(gl, - 0.8, -2, - 80, now / 100 + Math.PI / 2);
+    //shark3.setPositionRotation(gl, - 0.8, -2, - 80, now / 100 + Math.PI);
+    //shark4.setPositionRotation(gl, - 0.8, -2, - 80, now / 100 + 3 * Math.PI / 2);
     drawShadowMap(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);
     drawModels(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);
 
