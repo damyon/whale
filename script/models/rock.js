@@ -3,7 +3,7 @@ class Rock extends Drawable {
 
   constructor(index) {
     super();
-    this.LOD = 12;
+    this.LOD = 16;
     this.size = 3;
     this.offset = 1;
     this.buffers = null;
@@ -15,7 +15,7 @@ class Rock extends Drawable {
     this.index = index + 1;
 
     this.currentLOD = 3;
-    this.lowestLOD = 3;
+    this.lowestLOD = 1;
     this.highestLOD = 3;
   }
 
@@ -24,18 +24,22 @@ class Rock extends Drawable {
     let distance = Math.sqrt(Math.abs(this.x - cameraX) + 
       Math.abs(this.y - cameraY) + 
       Math.abs(this.z - cameraZ));
-    let LODBoundary = 14;
+    let LODBoundary = 6;
       
     // Increase LOD?
     if ((distance < LODBoundary) && (this.currentLOD < this.highestLOD)) {
       this.currentLOD++;
+      console.log('Increase Rock LOD');
       this.initBuffers(gl);
+      this.setPosition(gl, this.x, this.y, this.z);
     }
 
     // Decrease LOD?
     if ((distance > LODBoundary) && (this.currentLOD > this.lowestLOD)) {
       this.currentLOD--;
+      console.log('Decrease Rock LOD');
       this.initBuffers(gl);
+      this.setPosition(gl, this.x, this.y, this.z);
     }
   }
 
@@ -78,8 +82,6 @@ class Rock extends Drawable {
   }
 
   getLOD() {
-    return this.LOD;
-    /*
     let LOD = this.LOD, reduce = this.currentLOD;
 
     while (reduce != this.highestLOD) {
@@ -87,13 +89,12 @@ class Rock extends Drawable {
       reduce += 1;
     }
 
-    return LOD;*/
+    return LOD;
   }
 
   getVertexCount() {
-    return this.getLOD() * 3 * 4
+    return this.getLOD() * 3 * 4;
   }
-  
 
   /**
    * initBuffers
