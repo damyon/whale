@@ -93,6 +93,15 @@ class Character extends Drawable {
     }
   }
 
+  evaluateLOD(gl, x, y, z) {
+    this.main.evaluateLOD(gl, x, y, z);
+    let element = null;
+
+    for (element of this.members) {
+      element.evaluateLOD(gl, x, y, z);
+    }
+  }
+
   setGlobalRotation(gl, angle) {
     this.globalRotation = angle;
     this.main.setGlobalRotation(gl, angle);

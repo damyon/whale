@@ -11,8 +11,6 @@ class FishTail extends ProjectedModel {
     this.vertexCount = 6 * (this.LOD * this.LOD) * 2;
   }
 
-  
-
   /**
    * initBuffers
    *
@@ -21,16 +19,14 @@ class FishTail extends ProjectedModel {
   initBuffers(gl) {
     // Call the parent.
     ProjectedModel.prototype.initBuffers.call(this, gl);
-    
     // Load the texture.
     this.loadTexture(gl, 'script/models/dhufish/members/fishtail/texture.png');
 
     this.loadShape(gl, 'script/models/dhufish/members/fishtail/volume.png');
+    
     return this.buffers;
   }
-
   
-
   /**
    * draw
    * Draw the terrain.

@@ -7,6 +7,11 @@ class Tree extends Drawable {
     this.leaves = new Leaves(4 * Math.random());
   }
 
+  evaluateLOD(gl, x, y, z) {
+    this.trunk.evaluateLOD(gl, x, y, z);
+    this.leaves.evaluateLOD(gl, x, y, z);
+  }
+
   /**
    * Apply an offset to the position of all the vertices.
    *

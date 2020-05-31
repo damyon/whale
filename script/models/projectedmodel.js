@@ -17,10 +17,34 @@ class ProjectedModel extends Drawable {
     this.textureLoaded = new Promise((resolve, reject) => {
       this.textureResolver = resolve;
     });
-    this.vertexCount = 6 * (this.LOD * this.LOD) * 2;
     this.positions = [];
+    this.currentLOD = 3;
+    this.lowestLOD = 1;
+    this.highestLOD = 3;
   }
 
+  evaluateLOD(gl, cameraX, cameraY, cameraZ) {
+    // Based on the distance to the camera, tweak the LOD;
+    let distance = Math.sqrt(Math.abs(this.x - cameraX) + 
+      Math.abs(this.y - cameraY) + 
+      Math.abs(this.z - cameraZ));
+    let LODBoundary = 14;
+  
+    // Increase LOD?
+    if ((distance < LODBoundary) && (this.currentLOD < this.highestLOD)) {
+      this.currentLOD++;
+      console.log('Increase LOD (' + this.LOD + ')');
+      this.initBuffers(gl);
+    }
+
+    // Decrease LOD?
+    if ((distance > LODBoundary) && (this.currentLOD > this.lowestLOD)) {
+      this.currentLOD--;
+      console.log('Decrease LOD (' + this.LOD + ')');
+      this.initBuffers(gl);
+    }
+  }
+  
   /**
    * Chain a block of code to execute when the texture is loaded.
    * 
@@ -49,12 +73,12 @@ class ProjectedModel extends Drawable {
     s = Math.sin(this.angle);
     
     // Move - half
-    for (i = 0; i < this.vertexCount; i++) {
+    for (i = 0; i < this.getVertexCount(); i++) {
       translatedPositions[i * 3] += 1.75*this.size + this.pivotOffset;
     }
 
     // Local rotate
-    for (i = 0; i < this.vertexCount; i++) {
+    for (i = 0; i < this.getVertexCount(); i++) {
       let x = translatedPositions[i * 3];
       let z = translatedPositions[i * 3 + 2];
 
@@ -67,7 +91,7 @@ class ProjectedModel extends Drawable {
     s = Math.sin(this.globalAngle);
 
     // Global rotate
-    for (i = 0; i < this.vertexCount; i++) {
+    for (i = 0; i < this.getVertexCount(); i++) {
       let x = translatedPositions[i * 3];
       let z = translatedPositions[i * 3 + 2];
 
@@ -76,13 +100,13 @@ class ProjectedModel extends Drawable {
     }
     
     // Move + half
-    for (i = 0; i < this.vertexCount; i++) {
+    for (i = 0; i < this.getVertexCount(); i++) {
       translatedPositions[i * 3] -= 1.75*this.size + this.pivotOffset;
     }
 
     
     // Now translate.
-    for (i = 0; i < this.vertexCount; i++) {
+    for (i = 0; i < this.getVertexCount(); i++) {
       translatedPositions[i * 3] += this.x;
       translatedPositions[i * 3 + 1] += this.y;
       translatedPositions[i * 3 + 2] += this.z;
@@ -122,13 +146,13 @@ class ProjectedModel extends Drawable {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     // Now create an array of positions for the terrain.
-    const unit = this.size / this.LOD;
+    const unit = this.size / this.getLOD();
     let i = 0, j = 0, offset = 0, offsetX = 0, offsetY = 0, offsetZ = 0, one = 0, k = 0;
 
     one = - this.size/2;
     for (k = 0; k < 2; k++) {
-      for (i = 0; i < this.LOD; i++) {
-        for (j = 0; j < this.LOD; j++) {
+      for (i = 0; i < this.getLOD(); i++) {
+        for (j = 0; j < this.getLOD(); j++) {
           offsetX = one + i * unit;
           offsetZ = one + j * unit;
 
@@ -163,11 +187,11 @@ class ProjectedModel extends Drawable {
     let textureCoordinates = [];
     offset = 0;
 
-    one = 1 / this.LOD;
+    one = 1 / this.getLOD();
     
     for (k = 0; k < 2; k++) {
-      for (i = 0; i < this.LOD; i++) {
-        for (j = 0; j < this.LOD; j++) {
+      for (i = 0; i < this.getLOD(); i++) {
+        for (j = 0; j < this.getLOD(); j++) {
           
           let left = i * one;
           let roof = j * one;
@@ -203,8 +227,8 @@ class ProjectedModel extends Drawable {
     offset = 0;
     start = 0;
     for (k = 0; k < 2; k++) {
-      for (i = 0; i < this.LOD; i++) {
-        for (j = 0; j < this.LOD; j++) {
+      for (i = 0; i < this.getLOD(); i++) {
+        for (j = 0; j < this.getLOD(); j++) {
           indices[offset++] = start;
           indices[offset++] = start + 2;
           indices[offset++] = start + 1;
@@ -213,27 +237,20 @@ class ProjectedModel extends Drawable {
           indices[offset++] = start + 3;
           indices[offset++] = start + 2;
           start += 4;
-        
         }
       }
     }
 
     // Now send the element array to GL
 
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
-        new Uint16Array(indices), gl.STATIC_DRAW);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
     this.buffers = {
       position: positionBuffer,
       textureCoord: textureCoordBuffer,
       indices: indexBuffer,
     };
-
     
-    // Load the texture.
-    //this.loadTexture(gl, 'script/models/dhufish/main/texture.png');
-
-    //this.loadShape(gl, 'script/models/dhufish/main/volume.png');
     return this.buffers;
   }
 
@@ -274,31 +291,46 @@ class ProjectedModel extends Drawable {
 
     return result;
   }
+
+  getLOD() {
+    let LOD = this.LOD, reduce = this.currentLOD;
+
+    while (reduce != this.highestLOD) {
+      LOD /= 2;
+      reduce += 1;
+    }
+
+    return LOD;
+  }
+
+  getVertexCount() {
+    return 6 * (this.getLOD() * this.getLOD()) * 2;
+  }
   
 
   loadShape(gl, filename) {
     const image = new Image();
     const canvas = document.createElement('canvas');
     image.onload = function() {
-      canvas.width = this.LOD + 1;
-      canvas.height = this.LOD + 1;
-      canvas.getContext('2d').drawImage(image, 0, 0, this.LOD + 1, this.LOD + 1);
+      canvas.width = this.getLOD() + 1;
+      canvas.height = this.getLOD() + 1;
+      canvas.getContext('2d').drawImage(image, 0, 0, this.getLOD() + 1, this.getLOD() + 1);
 
-      let raw = canvas.getContext('2d').getImageData(0, 0, this.LOD + 1, this.LOD + 1).data;
+      let raw = canvas.getContext('2d').getImageData(0, 0, this.getLOD() + 1, this.getLOD() + 1).data;
 
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
       // Now create an array of positions for the terrain.
-      const unit = 2 * this.size / this.LOD;
+      const unit = 2 * this.size / this.getLOD();
       let i = 0, j = 0, k = 0, offset = 0, offsetX = 0, offsetZ1 = 0, offsetZ2 = 0, offsetZ3 = 0, offsetZ4 = 0, offsetY = 0, one = 0, index = 0;
       let row = 0, splat = 0;
       let heightOffset = this.fat, inverse = 1;
       
       one = - this.size;
-      raw = this.flip(raw, this.LOD + 1);
-      raw = this.spin(raw, this.LOD + 1);
+      raw = this.flip(raw, this.getLOD() + 1);
+      raw = this.spin(raw, this.getLOD() + 1);
       for (k = 0; k < 2; k++) {
-        for (i = this.LOD - 1; i >= 0; i--) {
-          for (j = this.LOD - 1; j >= 0; j--) {
+        for (i = this.getLOD() - 1; i >= 0; i--) {
+          for (j = this.getLOD() - 1; j >= 0; j--) {
             offsetX = one + i * unit;
             offsetY = one + j * unit;
             if (k) {
@@ -306,16 +338,16 @@ class ProjectedModel extends Drawable {
             }
             
             // Consider the map dimensions.
-            index = ((i * (this.LOD + 1)) + (j + 1)) * 4;
+            index = ((i * (this.getLOD() + 1)) + (j + 1)) * 4;
             index = raw.length - index;
             offsetZ1 = (raw[index] / 255) * 1.5 - 0.1;
-            index = (((i + 1) * (this.LOD + 1)) + (j + 1)) * 4;
+            index = (((i + 1) * (this.getLOD() + 1)) + (j + 1)) * 4;
             index = raw.length - index;
             offsetZ2 = (raw[index] / 255) * 1.5 - 0.1;
-            index = (((i + 1) * (this.LOD + 1)) + (j + 2)) * 4;
+            index = (((i + 1) * (this.getLOD() + 1)) + (j + 2)) * 4;
             index = raw.length - index;
             offsetZ3 = (raw[index] / 255) * 1.5 - 0.1;
-            index = ((i * (this.LOD + 1)) + (j + 2)) * 4;
+            index = ((i * (this.getLOD() + 1)) + (j + 2)) * 4;
             index = raw.length - index;
             offsetZ4 = (raw[index] / 255) * 1.5 - 0.1;
             let nonZeroCandidate = 0, needsSplat = [];
@@ -475,16 +507,8 @@ class ProjectedModel extends Drawable {
           textureCoord);
     }
 
-    // Tell WebGL which indices to use to index the vertices
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.buffers.indices);
-
-    // Tell WebGL to use our program when drawing
-
-
-    // Set the shader uniforms
-
-    // Specify the texture to map onto the faces.
-
+    
     // Tell WebGL we want to affect texture unit 0
 
     var uSampler = gl.getUniformLocation(shadow?camera.lightShaderProgram:camera.cameraShaderProgram, 'uSampler');
@@ -497,12 +521,12 @@ class ProjectedModel extends Drawable {
     if (shadow) {
       gl.uniform1i(uSampler, 1);
     }
-   
 
     {
       const type = gl.UNSIGNED_SHORT;
       const offset = 0;
-      gl.drawElements(gl.TRIANGLES, this.vertexCount, type, offset);
+      
+      gl.drawElements(gl.TRIANGLES, this.getVertexCount(), type, offset);
     }
 
   }

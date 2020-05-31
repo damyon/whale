@@ -4,7 +4,7 @@ class SharkTail extends ProjectedModel {
   constructor() {
     super();
     this.size = 4;
-    this.LOD = 63;
+    this.LOD = 64;
     this.fat = 0.8;
     this.pivotOffset = -2.5;
     this.clipLimit = 0.2;
@@ -12,8 +12,6 @@ class SharkTail extends ProjectedModel {
     this.centerOffset = -4;
     this.vertexCount = 6 * (this.LOD * this.LOD) * 2;
   }
-
-  
 
   /**
    * initBuffers
@@ -23,11 +21,11 @@ class SharkTail extends ProjectedModel {
   initBuffers(gl) {
     // Call the parent.
     ProjectedModel.prototype.initBuffers.call(this, gl);
-    
     // Load the texture.
     this.loadTexture(gl, 'script/models/shark/members/tail/texture.png');
 
     this.loadShape(gl, 'script/models/shark/members/tail/volume.png');
+    
     return this.buffers;
   }
 

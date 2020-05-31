@@ -2,12 +2,19 @@
 
 class Drawable {
   constructor() {
+    this.currentLOD = 3;
+    this.lowestLOD = 3;
+    this.highestLOD = 3;
     this.texture = null;
     this.rotateY = 0;
     this.positionX = 0;
     this.positionY = 0;
     this.positionZ = 0;
     this.blend = 0;
+  }
+
+  evaluateLOD(gl, cameraX, cameraY, cameraZ) {
+    return;
   }
 
   initBuffers(gl) {

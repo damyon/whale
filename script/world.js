@@ -41,6 +41,9 @@ function main() {
   let cloud4 = new Cloud(true);
   let shark = new Shark();
   let dhufish = new Dhufish();
+  let throttleLOD = 10.0;
+  let lastLOD = 0;
+  let targetFPS = 10;
   
   let drawables = [
     terrain,
@@ -131,6 +134,15 @@ function main() {
     gl.uniformMatrix4fv(sceneCamera.uMVMatrix, false, modelViewMatrix);
 
     gl.uniform3fv(sceneCamera.uColor, [1.0, 1.0, 0.8]);
+
+    if ((absTime - lastLOD) / 10 > throttleLOD) {
+      for (model of sceneDrawables) {
+        model.evaluateLOD(gl, sceneControls.x, sceneControls.y, sceneControls.z);
+      }
+      
+      lastLOD = absTime;
+    }
+
     for (model of sceneDrawables) {
       model.predraw(gl);
       model.draw(gl, sceneCamera, true, deltaTime, absTime);
@@ -170,15 +182,17 @@ function main() {
     sceneCamera.setRock(-(Math.sin((now / 10) - 0.2) / 6));
     sceneControls.processKeys(terrain, boat.boatWidth, boat.boatLength);
     boat.setPositionRotation(gl, -sceneControls.x - 0.8, 6 + (Math.sin(now / 10) / 10), -sceneControls.z, sceneControls.boatY);
-    //shark1.setPositionRotation(gl, - 0.8, -2, - 80, now / 100);
-    //shark2.setPositionRotation(gl, - 0.8, -2, - 80, now / 100 + Math.PI / 2);
-    //shark3.setPositionRotation(gl, - 0.8, -2, - 80, now / 100 + Math.PI);
-    //shark4.setPositionRotation(gl, - 0.8, -2, - 80, now / 100 + 3 * Math.PI / 2);
+    
     drawShadowMap(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);
     drawModels(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);
 
     absTime += deltaTime;
-    window.requestAnimationFrame(draw.bind(this, sceneCamera, sceneControls, sceneDrawables));
+
+    // We don't want full throttle.
+    let delay = 1000 / targetFPS;
+    window.setTimeout(function() {
+      window.requestAnimationFrame(draw.bind(this, sceneCamera, sceneControls, sceneDrawables));
+    }, delay);
   }
   draw(camera, controls, drawables, 0);
 }

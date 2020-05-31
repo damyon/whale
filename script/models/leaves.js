@@ -16,6 +16,29 @@ class Leaves extends Drawable {
     this.index = index + 1;
     this.blend = 1;
     this.size -= this.randOffset(index);
+    this.currentLOD = 3;
+    this.lowestLOD = 3;
+    this.highestLOD = 3;
+  }
+
+  evaluateLOD(gl, cameraX, cameraY, cameraZ) {
+    // Based on the distance to the camera, tweak the LOD;
+    let distance = Math.sqrt(Math.abs(this.x - cameraX) + 
+      Math.abs(this.y - cameraY) + 
+      Math.abs(this.z - cameraZ));
+    let LODBoundary = 14;
+      
+    // Increase LOD?
+    if ((distance < LODBoundary) && (this.currentLOD < this.highestLOD)) {
+      this.currentLOD++;
+      this.initBuffers(gl);
+    }
+
+    // Decrease LOD?
+    if ((distance > LODBoundary) && (this.currentLOD > this.lowestLOD)) {
+      this.currentLOD--;
+      this.initBuffers(gl);
+    }
   }
 
   randOffset(seed) {

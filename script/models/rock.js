@@ -11,9 +11,32 @@ class Rock extends Drawable {
     this.y = 0;
     this.z = 0;
 
-    this.vertexCount = this.LOD * 3 * 4;
     this.sourcePositions = [];
     this.index = index + 1;
+
+    this.currentLOD = 3;
+    this.lowestLOD = 3;
+    this.highestLOD = 3;
+  }
+
+  evaluateLOD(gl, cameraX, cameraY, cameraZ) {
+    // Based on the distance to the camera, tweak the LOD;
+    let distance = Math.sqrt(Math.abs(this.x - cameraX) + 
+      Math.abs(this.y - cameraY) + 
+      Math.abs(this.z - cameraZ));
+    let LODBoundary = 14;
+      
+    // Increase LOD?
+    if ((distance < LODBoundary) && (this.currentLOD < this.highestLOD)) {
+      this.currentLOD++;
+      this.initBuffers(gl);
+    }
+
+    // Decrease LOD?
+    if ((distance > LODBoundary) && (this.currentLOD > this.lowestLOD)) {
+      this.currentLOD--;
+      this.initBuffers(gl);
+    }
   }
 
   randOffset(seed) {
@@ -44,7 +67,7 @@ class Rock extends Drawable {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
     translatedPositions = this.sourcePositions.slice();
     let i = 0;
-    for (i = 0; i < this.vertexCount; i++) {
+    for (i = 0; i < this.getVertexCount(); i++) {
       translatedPositions[i * 3] += this.x;
       translatedPositions[i * 3 + 1] += this.y;
       translatedPositions[i * 3 + 2] += this.z;
@@ -53,6 +76,24 @@ class Rock extends Drawable {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(translatedPositions), gl.STATIC_DRAW);
     
   }
+
+  getLOD() {
+    return this.LOD;
+    /*
+    let LOD = this.LOD, reduce = this.currentLOD;
+
+    while (reduce != this.highestLOD) {
+      LOD /= 2;
+      reduce += 1;
+    }
+
+    return LOD;*/
+  }
+
+  getVertexCount() {
+    return this.getLOD() * 3 * 4
+  }
+  
 
   /**
    * initBuffers
@@ -68,12 +109,12 @@ class Rock extends Drawable {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     // Now create an array of positions.
-    const unit = this.size / this.LOD;
+    const unit = this.size / this.getLOD();
     let i = 0, offset = 0, offsetX = 0, offsetY = this.size, offsetZ = 0, one = 0, k = 0,
     skew = 2;
-    one = (2 * Math.PI) / this.LOD;
+    one = (2 * Math.PI) / this.getLOD();
     // Top
-    for (i = 0; i < this.LOD; i++) {
+    for (i = 0; i < this.getLOD(); i++) {
       offsetX = Math.sin(i * one) * this.size/2 + skew + this.randOffset(this.index);
       offsetZ = Math.cos(i * one) * this.size/2 - skew + this.randOffset(offsetX);
       offsetY = this.offset + this.randOffset(offsetX + offsetZ);
@@ -96,7 +137,7 @@ class Rock extends Drawable {
       this.sourcePositions[offset++] = offsetZ;
     }
     // Side 1
-    for (i = 0; i < this.LOD; i++) {
+    for (i = 0; i < this.getLOD(); i++) {
       offsetX = Math.sin(i * one) * this.size + skew + this.randOffset(this.index);
       offsetZ = Math.cos(i * one) * this.size - skew + this.randOffset(offsetX);
       offsetY = this.offset - this.size + this.randOffset(offsetX + offsetZ);
@@ -119,7 +160,7 @@ class Rock extends Drawable {
       this.sourcePositions[offset++] = offsetZ;
     }
     // Side 2
-    for (i = 0; i < this.LOD; i++) {
+    for (i = 0; i < this.getLOD(); i++) {
       offsetX = Math.sin(i * one) * this.size/2 + skew + this.randOffset(this.index);
       offsetZ = Math.cos(i * one) * this.size/2 - skew + this.randOffset(offsetX);
       offsetY = this.offset + this.randOffset(offsetX + offsetZ);
@@ -143,7 +184,7 @@ class Rock extends Drawable {
     }
 
     // Bottom
-    for (i = 0; i < this.LOD; i++) {
+    for (i = 0; i < this.getLOD(); i++) {
       offsetX = Math.sin(i * one) * this.size + skew + this.randOffset(this.index);
       offsetZ = Math.cos(i * one) * this.size - skew + this.randOffset(offsetX);
       offsetY = this.offset - this.size + this.randOffset(offsetX + offsetZ);
@@ -179,7 +220,7 @@ class Rock extends Drawable {
     offset = 0;
   
     let offset2 = 0;
-    for (i = 0; i < this.vertexCount; i++) {
+    for (i = 0; i < this.getVertexCount(); i++) {
       skew = 0;
       textureCoordinates[offset++] = this.sourcePositions[offset2++] / this.size + skew; // X
       offset2++;
@@ -199,7 +240,7 @@ class Rock extends Drawable {
     // This array defines each face as two triangles, using the
     // indices into the vertex array to specify each triangle's
     // position.
-    for (i = 0; i < this.vertexCount; i++) {
+    for (i = 0; i < this.getVertexCount(); i++) {
       indices[i] = i;
     }
 
@@ -289,9 +330,9 @@ class Rock extends Drawable {
     }
 
     {
-      const vertexCount = this.vertexCount;
       const type = gl.UNSIGNED_SHORT;
       const offset = 0;
+      const vertexCount = this.getVertexCount();
       gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
     }
 
