@@ -3,7 +3,7 @@ class Leaves extends Drawable {
 
   constructor(index) {
     super();
-    this.LOD = 12;
+    this.LOD = 16;
     this.size = 7;
     this.offset = 0.1;
     this.buffers = null;
@@ -17,7 +17,7 @@ class Leaves extends Drawable {
     this.blend = 1;
     this.size -= this.randOffset(index);
     this.currentLOD = 3;
-    this.lowestLOD = 3;
+    this.lowestLOD = 1;
     this.highestLOD = 3;
   }
 
@@ -26,18 +26,22 @@ class Leaves extends Drawable {
     let distance = Math.sqrt(Math.abs(this.x - cameraX) + 
       Math.abs(this.y - cameraY) + 
       Math.abs(this.z - cameraZ));
-    let LODBoundary = 14;
+    let LODBoundary = 10;
       
     // Increase LOD?
     if ((distance < LODBoundary) && (this.currentLOD < this.highestLOD)) {
       this.currentLOD++;
+      console.log('Increase Leaves LOD');
       this.initBuffers(gl);
+      this.setPosition(gl, this.x, this.y, this.z);
     }
 
     // Decrease LOD?
     if ((distance > LODBoundary) && (this.currentLOD > this.lowestLOD)) {
       this.currentLOD--;
+      console.log('Decrease Leaves LOD');
       this.initBuffers(gl);
+      this.setPosition(gl, this.x, this.y, this.z);
     }
   }
 
@@ -93,12 +97,12 @@ class Leaves extends Drawable {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
     // Now create an array of positions.
-    const unit = this.size / this.LOD;
+    const unit = this.size / this.getLOD();
     let i = 0, offset = 0, offsetX = 0, offsetY = this.size, offsetZ = 0, one = 0, k = 0,
     skew = 2;
-    one = (2 * Math.PI) / this.LOD;
+    one = (2 * Math.PI) / this.getLOD();
     // Top
-    for (i = 0; i < this.LOD; i++) {
+    for (i = 0; i < this.getLOD(); i++) {
       offsetX = Math.sin(i * one) * this.size/2 + skew + this.randOffset(this.index);
       offsetZ = Math.cos(i * one) * this.size/2 - skew + this.randOffset(offsetX);
       offsetY = this.offset + this.randOffset(offsetX + offsetZ);
@@ -121,7 +125,7 @@ class Leaves extends Drawable {
       this.sourcePositions[offset++] = offsetZ;
     }
     // Side 1
-    for (i = 0; i < this.LOD; i++) {
+    for (i = 0; i < this.getLOD(); i++) {
       offsetX = Math.sin(i * one) * this.size + skew + this.randOffset(this.index);
       offsetZ = Math.cos(i * one) * this.size - skew + this.randOffset(offsetX);
       offsetY = this.offset - this.size + this.randOffset(offsetX + offsetZ);
@@ -144,7 +148,7 @@ class Leaves extends Drawable {
       this.sourcePositions[offset++] = offsetZ;
     }
     // Side 2
-    for (i = 0; i < this.LOD; i++) {
+    for (i = 0; i < this.getLOD(); i++) {
       offsetX = Math.sin(i * one) * this.size/2 + skew + this.randOffset(this.index);
       offsetZ = Math.cos(i * one) * this.size/2 - skew + this.randOffset(offsetX);
       offsetY = this.offset + this.randOffset(offsetX + offsetZ);
@@ -168,7 +172,7 @@ class Leaves extends Drawable {
     }
 
     // Bottom
-    for (i = 0; i < this.LOD; i++) {
+    for (i = 0; i < this.getLOD(); i++) {
       offsetX = Math.sin(i * one) * this.size + skew + this.randOffset(this.index);
       offsetZ = Math.cos(i * one) * this.size - skew + this.randOffset(offsetX);
       offsetY = this.offset - this.size + this.randOffset(offsetX + offsetZ);
@@ -204,12 +208,12 @@ class Leaves extends Drawable {
     offset = 0;
   
     let offset2 = 0;
-    for (i = 0; i < this.vertexCount; i++) {
+    for (i = 0; i < this.getVertexCount(); i++) {
       textureCoordinates[offset++] = (this.sourcePositions[offset2++] / (this.size * 3)) + 0.5; // X
       offset2++;
       textureCoordinates[offset++] = (this.sourcePositions[offset2++] / (this.size * 3)) + 0.5; // Z
     }
-    for (i = 0; i < this.vertexCount*2; i++) {
+    for (i = 0; i < this.getVertexCount()*2; i++) {
       if (textureCoordinates[i] < 0) {
         textureCoordinates[i] = 0;
           console.log('bad clip 1');
@@ -233,7 +237,7 @@ class Leaves extends Drawable {
     // This array defines each face as two triangles, using the
     // indices into the vertex array to specify each triangle's
     // position.
-    for (i = 0; i < this.vertexCount; i++) {
+    for (i = 0; i < this.getVertexCount(); i++) {
       indices[i] = i;
     }
 
@@ -252,6 +256,21 @@ class Leaves extends Drawable {
     this.loadTexture(gl, 'texture/leaves.png');
 
     return this.buffers;
+  }
+
+  getLOD() {
+    let LOD = this.LOD, reduce = this.currentLOD;
+
+    while (reduce != this.highestLOD) {
+      LOD /= 2;
+      reduce += 1;
+    }
+
+    return LOD;
+  }
+
+  getVertexCount() {
+    return 12 * this.getLOD();
   }
 
   /**
@@ -323,7 +342,7 @@ class Leaves extends Drawable {
     }
 
     {
-      const vertexCount = this.vertexCount;
+      const vertexCount = this.getVertexCount();
       const type = gl.UNSIGNED_SHORT;
       const offset = 0;
       gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
