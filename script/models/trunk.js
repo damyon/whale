@@ -3,13 +3,13 @@ class Trunk extends Drawable {
 
   constructor() {
     super();
-    this.treeLOD = 8;
+    this.LOD = 16;
     this.treeSize = 4;
     this.treeOffset = 0;
     this.buffers = null;
     this.sourcePositions = [];
     this.currentLOD = 3;
-    this.lowestLOD = 3;
+    this.lowestLOD = 1;
     this.highestLOD = 3;
   }
 
@@ -18,18 +18,22 @@ class Trunk extends Drawable {
     let distance = Math.sqrt(Math.abs(this.x - cameraX) + 
       Math.abs(this.y - cameraY) + 
       Math.abs(this.z - cameraZ));
-    let LODBoundary = 14;
+    let LODBoundary = 10;
       
     // Increase LOD?
     if ((distance < LODBoundary) && (this.currentLOD < this.highestLOD)) {
       this.currentLOD++;
+      console.log('Increase Tree LOD');
       this.initBuffers(gl);
+      this.setPosition(gl, this.x, this.y, this.z);
     }
 
     // Decrease LOD?
     if ((distance > LODBoundary) && (this.currentLOD > this.lowestLOD)) {
       this.currentLOD--;
+      console.log('Decrease Tree LOD');
       this.initBuffers(gl);
+      this.setPosition(gl, this.x, this.y, this.z);
     }
   }
 
@@ -47,11 +51,11 @@ class Trunk extends Drawable {
     gl.bindBuffer(gl.ARRAY_BUFFER, treePositionBuffer);
 
     // Now create an array of positions for the tree.
-    const unit = this.treeSize / this.treeLOD;
+    const unit = this.treeSize / this.getLOD();
     let i = 0, offset = 0, offsetX = 0, offsetY = this.treeSize, offsetZ = 0, one = 0, k = 0,
     skew = 1;
-    one = (2 * Math.PI) / this.treeLOD;
-    for (i = 0; i < this.treeLOD; i++) {
+    one = (2 * Math.PI) / this.getLOD();
+    for (i = 0; i < this.getLOD(); i++) {
       offsetX = Math.sin(i * one) * this.treeSize / 24 + skew;
       offsetZ = Math.cos(i * one) * this.treeSize / 24 - skew;
       offsetY = this.treeOffset;
@@ -96,7 +100,7 @@ class Trunk extends Drawable {
     }
 
     // Branches
-    for (i = 0; i < this.treeLOD; i++) {
+    for (i = 0; i < this.getLOD(); i++) {
       var height = this.treeSize * Math.random();
 
       offsetX = Math.sin(i * one) * this.treeSize / 24 + skew;
@@ -153,7 +157,7 @@ class Trunk extends Drawable {
     let treeTextureCoordinates = [];
     offset = 0;
 
-    for (i = 0; i < this.treeLOD * 4; i++) {
+    for (i = 0; i < this.getLOD() * 4; i++) {
       treeTextureCoordinates[offset++] = 0; // X
       treeTextureCoordinates[offset++] = 0; // Y
 
@@ -177,8 +181,7 @@ class Trunk extends Drawable {
     // This array defines each face as two triangles, using the
     // indices into the vertex array to specify each triangle's
     // position.
-    for (i = 0; i < this.treeLOD * 12; i++) {
-    //for (i = 0; i < 3; i++) {
+    for (i = 0; i < this.getVertexCount(); i++) {
       treeIndices[i] = i;
     }
 
@@ -197,6 +200,21 @@ class Trunk extends Drawable {
     this.loadTexture(gl, 'texture/tree.jpg');
 
     return this.buffers;
+  }
+
+  getLOD() {
+    let LOD = this.LOD, reduce = this.currentLOD;
+
+    while (reduce != this.highestLOD) {
+      LOD /= 2;
+      reduce += 1;
+    }
+
+    return LOD;
+  }
+
+  getVertexCount() {
+    return 12 * this.getLOD();
   }
 
   /**
@@ -277,7 +295,7 @@ class Trunk extends Drawable {
     }
 
     {
-      const vertexCount = 12 * this.treeLOD; //(this.treeLOD);
+      const vertexCount = this.getVertexCount();
       const type = gl.UNSIGNED_SHORT;
       const offset = 0;
       gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
@@ -298,7 +316,7 @@ class Trunk extends Drawable {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
     translatedPositions = this.sourcePositions.slice();
     let i = 0;
-    for (i = 0; i < 12 * this.treeLOD; i++) {
+    for (i = 0; i < 12 * this.getLOD(); i++) {
       translatedPositions[i * 3] += this.x;
       translatedPositions[i * 3 + 1] += this.y;
       translatedPositions[i * 3 + 2] += this.z;

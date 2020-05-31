@@ -4,7 +4,7 @@ class SharkTail extends ProjectedModel {
   constructor() {
     super();
     this.size = 4;
-    this.LOD = 64;
+    this.LOD = 32;
     this.fat = 0.8;
     this.pivotOffset = -2.5;
     this.clipLimit = 0.2;
