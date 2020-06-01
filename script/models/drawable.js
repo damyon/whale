@@ -11,6 +11,7 @@ class Drawable {
     this.positionY = 0;
     this.positionZ = 0;
     this.blend = 0;
+    this.textureLoadedOnce = false;
   }
 
   evaluateLOD(gl, cameraX, cameraY, cameraZ) {
@@ -52,6 +53,12 @@ class Drawable {
   }
 
   loadTexture(gl, url) {
+    if (this.textureLoadedOnce) {
+      return;
+    }
+
+    this.textureLoadedOnce = true;
+
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
