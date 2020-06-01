@@ -24,10 +24,10 @@ class Rock extends Drawable {
     let distance = Math.sqrt(Math.abs(this.x - cameraX) + 
       Math.abs(this.y - cameraY) + 
       Math.abs(this.z - cameraZ));
-    let LODBoundary = 6;
+    let LODBoundary = 10;
       
     // Increase LOD?
-    if ((distance < LODBoundary) && (this.currentLOD < this.highestLOD)) {
+    if ((distance < LODBoundary * 0.8) && (this.currentLOD < this.highestLOD)) {
       this.currentLOD++;
       console.log('Increase Rock LOD');
       this.initBuffers(gl);

@@ -34,20 +34,25 @@ function main() {
   let bushes = terrain.createBushes();
   let trees = terrain.createTrees();
   let foam = terrain.createFoam();
+  let fish = [];
   let boat = new Boat();
   let cloud1 = new Cloud(false);
   let cloud2 = new Cloud(false);
   let cloud3 = new Cloud(true);
   let cloud4 = new Cloud(true);
   let shark = new Shark();
-  let dhufish = new Dhufish();
   let throttleLOD = 10.0;
   let lastLOD = 0;
-  let targetFPS = 10;
+  let targetFPS = 20;
+  let fishCount = 5;
+  let i = 0;
+
+  for (i = 0; i < fishCount; i++) {
+    fish.push(new Dhufish());
+  }
   
   let drawables = [
     terrain,
-    dhufish,
     shark,
     new Sea(1000, 0, 1),
     cloud1,
@@ -56,7 +61,9 @@ function main() {
     cloud4,
     boat
   ];
-  
+  for (i = 0; i < fishCount; i++) {
+    drawables.unshift(fish[i]);
+  }
   drawables = drawables.concat(rocks);
   drawables = drawables.concat(bushes);
   drawables = drawables.concat(trees);
@@ -65,14 +72,15 @@ function main() {
   for (model of drawables) {
     model.initBuffers(gl);
   }
-  shark.initBuffers(gl);
   
   cloud1.setPosition(gl, 100, 400, -1280);
   cloud2.setPosition(gl, -100, 400, 1280);
   cloud3.setPosition(gl, -1280, 400, 100);
   cloud4.setPosition(gl, 1280, 400, -100);
   shark.setPosition(gl, 5, -0.5, 76);
-  dhufish.setPosition(gl, 10, -1.8, 78);
+  for (i = 0; i < fishCount; i++) {
+    fish[i].setPosition(gl, 10, -1.8, 78 - i);
+  }
 
   boat.setPositionRotation(gl, 0, 12, 70, 0);
   // Move the rock.

@@ -29,7 +29,7 @@ class Leaves extends Drawable {
     let LODBoundary = 10;
       
     // Increase LOD?
-    if ((distance < LODBoundary) && (this.currentLOD < this.highestLOD)) {
+    if ((distance < LODBoundary * 0.8) && (this.currentLOD < this.highestLOD)) {
       this.currentLOD++;
       console.log('Increase Leaves LOD');
       this.initBuffers(gl);
