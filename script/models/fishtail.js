@@ -8,7 +8,7 @@ class FishTail extends ProjectedModel {
     this.fat = 0.6;
     this.clipLimit = 0.1;
     this.clampLimit = 0.2;
-    this.vertexCount = 6 * (this.LOD * this.LOD) * 2;
+    //this.vertexCount = 6 * (this.LOD * this.LOD) * 2;
   }
 
   /**

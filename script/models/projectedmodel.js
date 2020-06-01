@@ -30,6 +30,7 @@ class ProjectedModel extends Drawable {
       Math.abs(this.z - cameraZ));
     let LODBoundary = 16;
   
+    console.log('Distance: ' + distance + ' size:' + this.size);
     // Increase LOD?
     if ((distance < LODBoundary * 0.8) && (this.currentLOD < this.highestLOD)) {
       this.currentLOD++;

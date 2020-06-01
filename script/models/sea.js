@@ -152,14 +152,14 @@ class Sea extends Drawable {
         seaTextureCoordinates[offset++] = animation; // X
         seaTextureCoordinates[offset++] = animation; // Y
 
-        seaTextureCoordinates[offset++] = 0.5 + animation + animation2 + animation3; // X
+        seaTextureCoordinates[offset++] = 0.5 + animation;// + animation2 + animation3; // X
         seaTextureCoordinates[offset++] = animation; // Y
 
         seaTextureCoordinates[offset++] = 0.5 + animation; // X
-        seaTextureCoordinates[offset++] = 0.5 + animation - animation2 + animation3; // Y
+        seaTextureCoordinates[offset++] = 0.5 + animation;// - animation2 + animation3; // Y
 
-        seaTextureCoordinates[offset++] = animation + animation2 + animation3; // X
-        seaTextureCoordinates[offset++] = 0.5 + animation + animation2 + animation3; // Y
+        seaTextureCoordinates[offset++] = animation;// + animation2 + animation3; // X
+        seaTextureCoordinates[offset++] = 0.5 + animation;// + animation2 + animation3; // Y
       }
     }
     for (i = 0; i < seaTextureCoordinates.length; i++) {
