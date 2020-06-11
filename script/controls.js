@@ -23,31 +23,13 @@ class Controls {
     this.actionBackward = false;
     this.actionRight = false;
     this.actionLeft = false;
-
-    canvas.onmousedown = function (e) {
-      this.canvasIsPressed = true;
-      this.lastPressX = e.pageX;
-      this.lastPressY = e.pageY;
-    }.bind(this);
-    canvas.onmouseup = function () {
-      this.canvasIsPressed = false;
-    }.bind(this);
-    canvas.onmouseout = function () {
-      this.canvasIsPressed = false;
-    }.bind(this);
-    canvas.onmousemove = function (e) {
-      if (this.canvasIsPressed) {
-        this.xRotation += (e.pageY - this.lastPressY) / 550;
-        this.yRotation -= (e.pageX - this.lastPressX) / 550;
-
-        this.xRotation = Math.min(this.xRotation, Math.PI / 2.5);
-        this.xRotation = Math.max(this.xRotation, -Math.PI / 2.5);
-
-        this.lastPressX = e.pageX;
-        this.lastPressY = e.pageY;
-      }
-    }.bind(this);
-
+    
+    canvas.onclick = function() {
+      this.requestPointerLock();
+    };
+    this.canvas = canvas;
+    document.addEventListener('pointerlockchange', this.togglePointerLock.bind(this), false);
+    
     window.addEventListener('keydown', function (e) {
       switch(e.keyCode) {
         case 38:
@@ -99,15 +81,42 @@ class Controls {
     }.bind(this));
     canvas.addEventListener('touchmove', function (e) {
       e.preventDefault();
-      this.xRotation += (e.touches[0].clientY - this.lastPressY) / 50;
-      this.yRotation += (e.touches[0].clientX - this.lastPressX) / 50;
+      this.xRotation += (this.lastPressY - e.touches[0].clientY) / 500;
+      this.yRotation += (e.touches[0].clientX - this.lastPressX) / 500;
 
       this.xRotation = Math.min(this.xRotation, Math.PI / 2.5);
-      this.xRotation = Math.max(this.xRotation, 0.1);
+      this.xRotation = Math.max(this.xRotation, -Math.PI / 2.5);
 
       this.lastPressX = e.touches[0].clientX;
       this.lastPressY = e.touches[0].clientY;
     }.bind(this));
+  }
+
+  onmousemove(e) {
+    if (this.canvasIsPressed) {
+      this.xRotation += (e.movementY) / 3550;
+      this.yRotation -= (e.movementX) / 3550;
+
+      this.xRotation = Math.min(this.xRotation, Math.PI / 2.5);
+      this.xRotation = Math.max(this.xRotation, -Math.PI / 2.5);
+
+      this.lastPressX = e.pageX;
+      this.lastPressY = e.pageY;
+    }
+  }
+
+  togglePointerLock() {
+    let canvas = this.canvas;
+    let handler = this.onmousemove.bind(this);
+    if (document.pointerLockElement === canvas) {
+      this.canvasIsPressed = true;
+      console.log('The pointer lock status is now locked');
+      document.addEventListener("mousemove", handler, false);
+    } else {
+      this.canvasIsPressed = false;
+      console.log('The pointer lock status is now unlocked');
+      document.removeEventListener("mousemove", handler, false);
+    }
   }
 
   processKeys(terrain, boatWidth, boatLength) {
