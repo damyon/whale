@@ -94,8 +94,8 @@ class Controls {
 
   onmousemove(e) {
     if (this.canvasIsPressed) {
-      this.xRotation += (e.movementY) / 3550;
-      this.yRotation -= (e.movementX) / 3550;
+      this.xRotation -= (e.movementY) / 3550;
+      this.yRotation += (e.movementX) / 3550;
 
       this.xRotation = Math.min(this.xRotation, Math.PI / 2.5);
       this.xRotation = Math.max(this.xRotation, -Math.PI / 2.5);

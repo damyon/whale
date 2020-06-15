@@ -21,6 +21,7 @@ class ProjectedModel extends Drawable {
     this.currentLOD = 3;
     this.lowestLOD = 1;
     this.highestLOD = 3;
+    this.clipCount = 0;
   }
 
   evaluateLOD(gl, cameraX, cameraY, cameraZ) {
@@ -305,7 +306,7 @@ class ProjectedModel extends Drawable {
   }
 
   getVertexCount() {
-    return 6 * (this.getLOD() * this.getLOD()) * 2;
+    return ((6 * (this.getLOD()) * (this.getLOD()) * 2) - (this.clipCount * 6));
   }
   
 
@@ -324,7 +325,8 @@ class ProjectedModel extends Drawable {
       const unit = 2 * this.size / this.getLOD();
       let i = 0, j = 0, k = 0, offset = 0, offsetX = 0, offsetZ1 = 0, offsetZ2 = 0, offsetZ3 = 0, offsetZ4 = 0, offsetY = 0, one = 0, index = 0;
       let row = 0, splat = 0;
-      let heightOffset = this.fat, inverse = 1;
+      let heightOffset = this.fat, inverse = 1, clipList = [], clipOffset = 0;
+      let clip1 = 0, clip2 = 0, clip3 = 0, clip4 = 0;
       
       one = - this.size;
       raw = this.flip(raw, this.getLOD() + 1);
@@ -339,98 +341,97 @@ class ProjectedModel extends Drawable {
             }
             
             // Consider the map dimensions.
+            
             index = ((i * (this.getLOD() + 1)) + (j + 1)) * 4;
             index = raw.length - index;
             offsetZ1 = (raw[index] / 255) * 1.5 - 0.1;
+            clip1 = raw[index];
             index = (((i + 1) * (this.getLOD() + 1)) + (j + 1)) * 4;
             index = raw.length - index;
             offsetZ2 = (raw[index] / 255) * 1.5 - 0.1;
+            clip2 = raw[index];
             index = (((i + 1) * (this.getLOD() + 1)) + (j + 2)) * 4;
             index = raw.length - index;
             offsetZ3 = (raw[index] / 255) * 1.5 - 0.1;
+            clip3 = raw[index];
             index = ((i * (this.getLOD() + 1)) + (j + 2)) * 4;
             index = raw.length - index;
             offsetZ4 = (raw[index] / 255) * 1.5 - 0.1;
+            clip4 = raw[index];
             let nonZeroCandidate = 0, needsSplat = [];
-
-            if (offsetZ1 * heightOffset > this.clipLimit) {
-              if (offsetZ1 * heightOffset < this.clampLimit) {
-                this.positions[offset++] = offsetX - 6;
-                this.positions[offset++] = offsetY;
-                this.positions[offset++] = 0.01*inverse;
-              } else {
-                nonZeroCandidate = offset;
+            
+            if (clip1 > this.clipLimit) {
+               nonZeroCandidate = offset;
                 this.positions[offset++] = offsetX - 6;
                 this.positions[offset++] = offsetY;
                 this.positions[offset++] = offsetZ1 * heightOffset * inverse;
-              }
+              
             } else {
               needsSplat.push(offset);
-              this.positions[offset++] = -2*this.size - this.centerOffset;
-              this.positions[offset++] = 0;
-              this.positions[offset++] = 0;
+              this.positions[offset++] = offsetX - 6;
+              this.positions[offset++] = offsetY;
+              this.positions[offset++] = offsetZ1 * heightOffset * inverse; 
             }
           
-            if (offsetZ2 * heightOffset > this.clipLimit) {
-              if (offsetZ2 * heightOffset < this.clampLimit) {
-                this.positions[offset++] = offsetX + unit - 6;
-                this.positions[offset++] = offsetY;
-                this.positions[offset++] = 0.01*inverse;
-              } else {
-                nonZeroCandidate = offset;
+            if (clip2  > this.clipLimit) {
+               nonZeroCandidate = offset;
                 this.positions[offset++] = offsetX + unit - 6;
                 this.positions[offset++] = offsetY;
                 this.positions[offset++] = offsetZ2 * heightOffset * inverse;
-              }
+              
             } else {
               needsSplat.push(offset);
-              this.positions[offset++] = -2*this.size - this.centerOffset;
-              this.positions[offset++] = 0;
-              this.positions[offset++] = 0;
+              this.positions[offset++] = offsetX + unit - 6;
+              this.positions[offset++] = offsetY;
+              this.positions[offset++] = offsetZ2 * heightOffset * inverse; 
             }
   
-            if (offsetZ3 * heightOffset > this.clipLimit) {
-              if (offsetZ3 * heightOffset < this.clampLimit) {
-                this.positions[offset++] = offsetX + unit - 6;
-                this.positions[offset++] = offsetY + unit;
-                this.positions[offset++] = 0.01*inverse;
-              } else {  
+            if (clip3  > this.clipLimit) {
                 nonZeroCandidate = offset;
                 this.positions[offset++] = offsetX + unit - 6;
                 this.positions[offset++] = offsetY + unit;
                 this.positions[offset++] = offsetZ3 * heightOffset * inverse;
-              }
+              
             } else {
               needsSplat.push(offset);
-              this.positions[offset++] = -2*this.size - this.centerOffset;
-              this.positions[offset++] = 0;
-              this.positions[offset++] = 0;
+              this.positions[offset++] = offsetX + unit - 6;
+              this.positions[offset++] = offsetY + unit;
+              this.positions[offset++] = offsetZ3 * heightOffset * inverse; 
             }
 
-            if (offsetZ4 * heightOffset > this.clipLimit) {
-              if (offsetZ4 * heightOffset < this.clampLimit) {
-                this.positions[offset++] = offsetX - 6;
-                this.positions[offset++] = offsetY + unit;
-                this.positions[offset++] = 0.01*inverse;
-              } else {  
+            if (clip4  > this.clipLimit) {
                 nonZeroCandidate = offset;
                 this.positions[offset++] = offsetX - 6;
                 this.positions[offset++] = offsetY + unit;
                 this.positions[offset++] = offsetZ4 * heightOffset * inverse;
-              }
+              
             } else {
               needsSplat.push(offset);
-              this.positions[offset++] = -2*this.size - this.centerOffset;
-              this.positions[offset++] = 0;
-              this.positions[offset++] = 0;
+              
+              this.positions[offset++] = offsetX - 6;
+              this.positions[offset++] = offsetY + unit;
+              this.positions[offset++] = offsetZ4 * heightOffset * inverse;
             }
+
+            if ((clip1 + clip2 + clip3 + clip4) < this.clipLimit) {
+              if (inverse == 1) {
+                clipList.push(clipOffset);
+              } else {
+                console.log('skip|' + (clip1 + clip2 + clip3 + clip4) + '|:' + i + ':' + j + ':' + index + ':' + raw.length);
+              }
+            } else {
+              if (inverse != 1) {
+                console.log('no skip|' + (clip1 + clip2 + clip3 + clip4) + '|:' + i + ':' + j + ':' + index + ':' + raw.length);
+              }
+            }
+            clipOffset++;
 
             if (nonZeroCandidate) {
               if (needsSplat.length == 4) {
                 for (splat of needsSplat) {
-                  this.positions[splat] = this.positions[nonZeroCandidate];
-                  this.positions[splat+1] = this.positions[nonZeroCandidate+1];
-                  this.positions[splat+2] = 0;
+                 // this.positions[splat] = this.positions[nonZeroCandidate];
+                 // this.positions[splat+1] = this.positions[nonZeroCandidate+1];
+                 // this.positions[splat+2] = 0;
                 }
               }
             }
@@ -442,7 +443,83 @@ class ProjectedModel extends Drawable {
       
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.positions),
                     gl.STATIC_DRAW);
+      console.log('Positions:' + clipOffset);
 
+      const indexBuffer = gl.createBuffer();
+      let start = 0, indices = [];
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+      // This array defines each face as two triangles, using the
+      // indices into the vertex array to specify each triangle's
+      // position.
+      offset = 0;
+      start = 0;
+      let posIndex = 0;
+      for (k = 0; k < 2; k++) {
+        for (i = this.getLOD() - 1; i >= 0; i--) {
+          for (j = this.getLOD() - 1; j >= 0; j--) {
+            if (!clipList.includes(posIndex)) {
+              indices[offset++] = start;
+              indices[offset++] = start + 2;
+              indices[offset++] = start + 1;
+            
+              indices[offset++] = start;
+              indices[offset++] = start + 3;
+              indices[offset++] = start + 2;
+            }
+            posIndex++;
+            start += 4;
+          }
+        }
+        posIndex = 0
+      }
+      console.log('Indices:' + posIndex);
+
+
+      // Now send the element array to GL
+
+      gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+      this.buffers.indices = indexBuffer;
+
+      const textureCoordBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
+
+      let textureCoordinates = [];
+      offset = 0;
+
+      one = 1 / this.getLOD();
+      posIndex = 0;
+      for (k = 0; k < 2; k++) {
+        for (i = this.getLOD() - 1; i >= 0; i--) {
+          for (j = this.getLOD() - 1; j >= 0; j--) {
+            if (!clipList.includes(posIndex)) {
+            
+              let left = i * one;
+              let roof = j * one;
+
+              textureCoordinates[offset++] = left + one; // X
+              textureCoordinates[offset++] = roof + one; // Y
+
+              textureCoordinates[offset++] = left; // X
+              textureCoordinates[offset++] = roof + one; // Y
+
+              textureCoordinates[offset++] = left; // X
+              textureCoordinates[offset++] = roof; // Y
+
+              textureCoordinates[offset++] = left + one; // X
+              textureCoordinates[offset++] = roof; // Y
+            }
+            posIndex++;
+          }
+        }
+        posIndex = 0;
+      }
+
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
+                    gl.STATIC_DRAW);
+      this.buffers.texture = textureCoordBuffer;
+
+      this.clipCount = clipList.length;
       this.setPosition(gl, this.x, this.y, this.z);
       this.textureResolver(true);
     }.bind(this);
