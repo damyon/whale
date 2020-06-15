@@ -306,7 +306,7 @@ class ProjectedModel extends Drawable {
   }
 
   getVertexCount() {
-    return ((6 * (this.getLOD()) * (this.getLOD()) * 2) - (this.clipCount * 6));
+    return ((6 * (this.getLOD()) * (this.getLOD()) * 2) - (this.clipCount * 6 * 2));
   }
   
 
