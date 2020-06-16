@@ -17,6 +17,7 @@ class ProjectedModel extends Drawable {
     this.textureLoaded = new Promise((resolve, reject) => {
       this.textureResolver = resolve;
     });
+    this.vertexCount = 0;
     this.positions = [];
     this.currentLOD = 3;
     this.lowestLOD = 1;
@@ -306,7 +307,8 @@ class ProjectedModel extends Drawable {
   }
 
   getVertexCount() {
-    return ((6 * (this.getLOD()) * (this.getLOD()) * 2) - (this.clipCount * 6 * 2));
+    //return ((6 * (this.getLOD()) * (this.getLOD()) * 2) - (this.clipCount * 6));
+    return this.vertexCount;
   }
   
 
@@ -338,90 +340,81 @@ class ProjectedModel extends Drawable {
             offsetY = one + j * unit;
             if (k) {
               inverse = -1;
+            } else {
+              inverse = 1;
             }
             
             // Consider the map dimensions.
             
             index = ((i * (this.getLOD() + 1)) + (j + 1)) * 4;
             index = raw.length - index;
-            offsetZ1 = (raw[index] / 255) * 1.5 - 0.1;
+            offsetZ1 = (raw[index] / 255) * 1.5;
             clip1 = raw[index];
             index = (((i + 1) * (this.getLOD() + 1)) + (j + 1)) * 4;
             index = raw.length - index;
-            offsetZ2 = (raw[index] / 255) * 1.5 - 0.1;
+            offsetZ2 = (raw[index] / 255) * 1.5;
             clip2 = raw[index];
             index = (((i + 1) * (this.getLOD() + 1)) + (j + 2)) * 4;
             index = raw.length - index;
-            offsetZ3 = (raw[index] / 255) * 1.5 - 0.1;
+            offsetZ3 = (raw[index] / 255) * 1.5;
             clip3 = raw[index];
             index = ((i * (this.getLOD() + 1)) + (j + 2)) * 4;
             index = raw.length - index;
-            offsetZ4 = (raw[index] / 255) * 1.5 - 0.1;
+            offsetZ4 = (raw[index] / 255) * 1.5;
             clip4 = raw[index];
             let nonZeroCandidate = 0, needsSplat = [];
             
             if (clip1 > this.clipLimit) {
-               nonZeroCandidate = offset;
-                this.positions[offset++] = offsetX - 6;
-                this.positions[offset++] = offsetY;
-                this.positions[offset++] = offsetZ1 * heightOffset * inverse;
-              
+              nonZeroCandidate = offset;
             } else {
               needsSplat.push(offset);
-              this.positions[offset++] = offsetX - 6;
-              this.positions[offset++] = offsetY;
-              this.positions[offset++] = offsetZ1 * heightOffset * inverse; 
             }
-          
+            this.positions[offset++] = offsetX - 6;
+            this.positions[offset++] = offsetY;
+            this.positions[offset++] = offsetZ1 * heightOffset * inverse; 
+            if (clip1 < this.clampLimit) {
+              this.positions[offset - 1] = 0;
+            } 
+        
             if (clip2  > this.clipLimit) {
-               nonZeroCandidate = offset;
-                this.positions[offset++] = offsetX + unit - 6;
-                this.positions[offset++] = offsetY;
-                this.positions[offset++] = offsetZ2 * heightOffset * inverse;
-              
+              nonZeroCandidate = offset;
             } else {
               needsSplat.push(offset);
-              this.positions[offset++] = offsetX + unit - 6;
-              this.positions[offset++] = offsetY;
-              this.positions[offset++] = offsetZ2 * heightOffset * inverse; 
             }
-  
+            this.positions[offset++] = offsetX + unit - 6;
+            this.positions[offset++] = offsetY;
+            this.positions[offset++] = offsetZ2 * heightOffset * inverse; 
+            if (clip2 < this.clampLimit) {
+              this.positions[offset - 1] = 0;
+            } 
+        
             if (clip3  > this.clipLimit) {
-                nonZeroCandidate = offset;
-                this.positions[offset++] = offsetX + unit - 6;
-                this.positions[offset++] = offsetY + unit;
-                this.positions[offset++] = offsetZ3 * heightOffset * inverse;
-              
+              nonZeroCandidate = offset;
             } else {
               needsSplat.push(offset);
-              this.positions[offset++] = offsetX + unit - 6;
-              this.positions[offset++] = offsetY + unit;
-              this.positions[offset++] = offsetZ3 * heightOffset * inverse; 
             }
-
+            this.positions[offset++] = offsetX + unit - 6;
+            this.positions[offset++] = offsetY + unit;
+            this.positions[offset++] = offsetZ3 * heightOffset * inverse; 
+            if (clip3 < this.clampLimit) {
+              this.positions[offset - 1] = 0;
+            } 
+        
             if (clip4  > this.clipLimit) {
                 nonZeroCandidate = offset;
-                this.positions[offset++] = offsetX - 6;
-                this.positions[offset++] = offsetY + unit;
-                this.positions[offset++] = offsetZ4 * heightOffset * inverse;
-              
             } else {
               needsSplat.push(offset);
-              
-              this.positions[offset++] = offsetX - 6;
-              this.positions[offset++] = offsetY + unit;
-              this.positions[offset++] = offsetZ4 * heightOffset * inverse;
             }
-
-            if ((clip1 + clip2 + clip3 + clip4) < this.clipLimit) {
+            this.positions[offset++] = offsetX - 6;
+            this.positions[offset++] = offsetY + unit;
+            this.positions[offset++] = offsetZ4 * heightOffset * inverse;
+            if (clip4 < this.clampLimit) {
+              this.positions[offset - 1] = 0;
+            } 
+        
+            if ((clip1 + clip2 + clip3 + clip4) < (this.clipLimit - 0.9)) {
               if (inverse == 1) {
                 clipList.push(clipOffset);
-              } else {
-                console.log('skip|' + (clip1 + clip2 + clip3 + clip4) + '|:' + i + ':' + j + ':' + index + ':' + raw.length);
-              }
-            } else {
-              if (inverse != 1) {
-                console.log('no skip|' + (clip1 + clip2 + clip3 + clip4) + '|:' + i + ':' + j + ':' + index + ':' + raw.length);
               }
             }
             clipOffset++;
@@ -454,7 +447,7 @@ class ProjectedModel extends Drawable {
       // position.
       offset = 0;
       start = 0;
-      let posIndex = 0;
+      let posIndex = 0, skipN = 0, noSkipN = 0, skipNK = 0, noSkipNK = 0;
       for (k = 0; k < 2; k++) {
         for (i = this.getLOD() - 1; i >= 0; i--) {
           for (j = this.getLOD() - 1; j >= 0; j--) {
@@ -466,6 +459,15 @@ class ProjectedModel extends Drawable {
               indices[offset++] = start;
               indices[offset++] = start + 3;
               indices[offset++] = start + 2;
+              
+            } else {
+              indices[offset++] = 0;
+              indices[offset++] = 0;
+              indices[offset++] = 0;
+              indices[offset++] = 0;
+              indices[offset++] = 0;
+              indices[offset++] = 0;
+              
             }
             posIndex++;
             start += 4;
@@ -473,9 +475,6 @@ class ProjectedModel extends Drawable {
         }
         posIndex = 0
       }
-      console.log('Indices:' + posIndex);
-
-
       // Now send the element array to GL
 
       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
@@ -518,8 +517,10 @@ class ProjectedModel extends Drawable {
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
                     gl.STATIC_DRAW);
       this.buffers.texture = textureCoordBuffer;
-
-      this.clipCount = clipList.length;
+  
+      this.clipCount = clipList.length * 2;
+      this.vertexCount = indices.length;
+      console.log('Total clip: ' + this.clipCount);
       this.setPosition(gl, this.x, this.y, this.z);
       this.textureResolver(true);
     }.bind(this);
