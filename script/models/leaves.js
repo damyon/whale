@@ -216,11 +216,9 @@ class Leaves extends Drawable {
     for (i = 0; i < this.getVertexCount()*2; i++) {
       if (textureCoordinates[i] < 0) {
         textureCoordinates[i] = 0;
-          console.log('bad clip 1');
       }
       if (textureCoordinates[i] > 1) {
         textureCoordinates[i] = 1;
-        console.log('bad clip 2');
       }
     }
 

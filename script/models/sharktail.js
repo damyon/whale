@@ -3,13 +3,13 @@ class SharkTail extends ProjectedModel {
 
   constructor() {
     super();
-    this.size = 4;
+    this.size = 3;
     this.LOD = 24;
     this.fat = 0.8;
-    this.pivotOffset = -2.5;
+    //this.pivotOffset = -2.5;
     this.clipLimit = 150;
     this.clampLimit = 125
-    this.centerOffset = -4;
+    //this.centerOffset = -3;
     //this.vertexCount = 6 * (this.LOD * this.LOD) * 2;
   }
 

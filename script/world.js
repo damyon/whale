@@ -43,7 +43,7 @@ function main() {
   let shark = new Shark();
   let throttleLOD = 10.0;
   let lastLOD = 0;
-  let targetFPS = 20;
+  let targetFPS = 60;
   let fishCount = 5;
   let i = 0;
 
@@ -64,6 +64,7 @@ function main() {
   for (i = 0; i < fishCount; i++) {
     drawables.unshift(fish[i]);
   }
+  
   drawables = drawables.concat(rocks);
   drawables = drawables.concat(bushes);
   drawables = drawables.concat(trees);
@@ -77,7 +78,7 @@ function main() {
   cloud2.setPosition(gl, -100, 400, 1280);
   cloud3.setPosition(gl, -1280, 400, 100);
   cloud4.setPosition(gl, 1280, 400, -100);
-  shark.setPosition(gl, 5, -0.5, 76);
+  shark.setPosition(gl, 5, -1, 76);
   for (i = 0; i < fishCount; i++) {
     fish[i].setPosition(gl, 10, -1.8, 78 - i);
   }

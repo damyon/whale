@@ -3,13 +3,13 @@ class SharkTorso extends ProjectedModel {
 
   constructor() {
     super();
-    this.size = 4;
+    this.size = 3;
     this.LOD = 32;
     this.fat = 0.8;
     this.clipLimit = 150;
     this.clampLimit = 125
-    this.pivotOffset = -2.5;
-    this.centerOffset = -1;
+   // this.pivotOffset = -2.5;
+   // this.centerOffset = -1;
     //this.vertexCount = 6 * (this.LOD * this.LOD) * 2;
   }
 
