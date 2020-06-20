@@ -327,8 +327,8 @@ class ProjectedModel extends Drawable {
       const unit = 2 * this.size / this.getLOD();
       let i = 0, j = 0, k = 0, offset = 0, offsetX = 0, offsetZ1 = 0, offsetZ2 = 0, offsetZ3 = 0, offsetZ4 = 0, offsetY = 0, one = 0, index = 0;
       let row = 0, splat = 0;
-      let heightOffset = this.fat, inverse = 1, clipList = [], clipOffset = 0;
-      let clip1 = 0, clip2 = 0, clip3 = 0, clip4 = 0;
+      let heightOffset = this.fat, inverse = 1, clipList = [], clipOffset = 0, clampList = [];
+      let clip1 = 0, clip2 = 0, clip3 = 0, clip4 = 0, hSkew = 0;
       
       one = - this.size;
       raw = this.flip(raw, this.getLOD() + 1);
@@ -336,6 +336,9 @@ class ProjectedModel extends Drawable {
       for (k = 0; k < 2; k++) {
         for (i = this.getLOD() - 1; i >= 0; i--) {
           for (j = this.getLOD() - 1; j >= 0; j--) {
+            // Shift every second row 1/2 a unit right.
+            hSkew = j % 2;
+            
             offsetX = one + i * unit;
             offsetY = one + j * unit;
             if (k) {
@@ -354,6 +357,10 @@ class ProjectedModel extends Drawable {
             index = raw.length - index;
             offsetZ2 = (raw[index] / 255) * 1.5;
             clip2 = raw[index];
+            if (hSkew) {
+              clip2 += raw[index + 4];
+              clip2 /=2;
+            }
             index = (((i + 1) * (this.getLOD() + 1)) + (j + 2)) * 4;
             index = raw.length - index;
             offsetZ3 = (raw[index] / 255) * 1.5;
@@ -362,6 +369,10 @@ class ProjectedModel extends Drawable {
             index = raw.length - index;
             offsetZ4 = (raw[index] / 255) * 1.5;
             clip4 = raw[index];
+            if (hSkew) {
+              clip4 += raw[index + 4];
+              clip4 /=2;
+            }
             let nonZeroCandidate = 0, needsSplat = [];
             
             if (clip1 > this.clipLimit) {
@@ -369,7 +380,7 @@ class ProjectedModel extends Drawable {
             } else {
               needsSplat.push(offset);
             }
-            this.positions[offset++] = offsetX - 6;
+            this.positions[offset++] = offsetX - 6 + (hSkew * (unit/2));
             this.positions[offset++] = offsetY;
             this.positions[offset++] = offsetZ1 * heightOffset * inverse; 
             if (clip1 < this.clampLimit) {
@@ -381,7 +392,7 @@ class ProjectedModel extends Drawable {
             } else {
               needsSplat.push(offset);
             }
-            this.positions[offset++] = offsetX + unit - 6;
+            this.positions[offset++] = offsetX + unit - 6 + (hSkew * (unit/2));
             this.positions[offset++] = offsetY;
             this.positions[offset++] = offsetZ2 * heightOffset * inverse; 
             if (clip2 < this.clampLimit) {
@@ -401,7 +412,7 @@ class ProjectedModel extends Drawable {
             } 
         
             if (clip4  > this.clipLimit) {
-                nonZeroCandidate = offset;
+              nonZeroCandidate = offset;
             } else {
               needsSplat.push(offset);
             }
@@ -418,21 +429,13 @@ class ProjectedModel extends Drawable {
               }
             }
             clipOffset++;
-
-            if (nonZeroCandidate) {
-              if (needsSplat.length == 4) {
-                for (splat of needsSplat) {
-                 // this.positions[splat] = this.positions[nonZeroCandidate];
-                 // this.positions[splat+1] = this.positions[nonZeroCandidate+1];
-                 // this.positions[splat+2] = 0;
-                }
-              }
-            }
-
           }
         
         }
       }
+
+      let posIndex = 0;
+
       
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.positions),
                     gl.STATIC_DRAW);
@@ -447,7 +450,8 @@ class ProjectedModel extends Drawable {
       // position.
       offset = 0;
       start = 0;
-      let posIndex = 0, skipN = 0, noSkipN = 0, skipNK = 0, noSkipNK = 0;
+      posIndex = 0;
+      let skipN = 0, noSkipN = 0, skipNK = 0, noSkipNK = 0;
       for (k = 0; k < 2; k++) {
         for (i = this.getLOD() - 1; i >= 0; i--) {
           for (j = this.getLOD() - 1; j >= 0; j--) {

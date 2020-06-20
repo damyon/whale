@@ -4,7 +4,7 @@ class SharkTorso extends ProjectedModel {
   constructor() {
     super();
     this.size = 3;
-    this.LOD = 32;
+    this.LOD = 24;
     this.fat = 0.8;
     this.clipLimit = 150;
     this.clampLimit = 125
