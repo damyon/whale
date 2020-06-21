@@ -3,12 +3,12 @@ class SharkTail extends ProjectedModel {
 
   constructor() {
     super();
-    this.size = 6;
-    this.LOD = 48;
+    this.size = 4;
+    this.LOD = 12;
     this.fat = 0.4;
     //this.pivotOffset = -2.5;
     this.clipLimit = 150;
-    this.clampLimit = 45;
+    this.clampLimit = 0;
     //this.centerOffset = -3;
     //this.vertexCount = 6 * (this.LOD * this.LOD) * 2;
   }
@@ -31,7 +31,7 @@ class SharkTail extends ProjectedModel {
 
   setWaveRotation(gl, offset) {
 
-    let angle = Math.sin(offset * 0.2) / 7;
+    let angle = Math.sin(offset * 0.2) / 14;
     
     this.setPositionRotation(gl, this.x, this.y, this.z, angle);
   }

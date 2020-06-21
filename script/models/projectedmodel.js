@@ -130,7 +130,7 @@ class ProjectedModel extends Drawable {
 
   setWaveRotation(gl, offset) {
 
-    let angle = Math.sin(offset * 0.2) / 2;
+    let angle = Math.sin(offset * 0.2) / 6;
     
     this.setPositionRotation(gl, this.x, this.y, this.z, angle);
   }
@@ -444,37 +444,41 @@ class ProjectedModel extends Drawable {
                + (this.getLOD() - 1 - j);
             if (clipList.includes(clipOffset)) {
               if (j > 0) {
-
                 clipOffset = k * (this.getLOD() * this.getLOD())
-               + (this.getLOD() - 1 - i) * (this.getLOD())
-               + (this.getLOD() - 1 - (j-1));
+                  + (this.getLOD() - 1 - i) * (this.getLOD())
+                  + (this.getLOD() - 1 - (j-1));
 
                 this.positions[clipOffset*12 + 3 + 2] = 0;
                 this.positions[clipOffset*12 + 6 + 2] = 0;
               }
 
               if (j < this.getLOD() - 1) {
-                 clipOffset = k * (this.getLOD() * this.getLOD())
-               + (this.getLOD() - 1 - i) * (this.getLOD())
-               + (this.getLOD() - 1 - (j+1));
+                clipOffset = k * (this.getLOD() * this.getLOD())
+                  + (this.getLOD() - 1 - i) * (this.getLOD())
+                  + (this.getLOD() - 1 - (j+1));
 
-               this.positions[clipOffset*12 + 3 + 2] = 0;
-               this.positions[clipOffset*12 + 6 + 2] = 0;
-             }
-/*
+                this.positions[clipOffset*12 + 3 + 2] = 0;
+                this.positions[clipOffset*12 + 6 + 2] = 0;
+              }
 
               if (i > 0) {
-                direction = this.getLOD();
-                this.positions[offset + direction + 0 + 2] = 0;
-                this.positions[offset + direction + 3 + 2] = 0;
+                clipOffset = k * (this.getLOD() * this.getLOD())
+                  + (this.getLOD() - 1 - i - 1) * (this.getLOD())
+                  + (this.getLOD() - 1 - (j));
+
+                this.positions[clipOffset*12 + 3 + 2] = 0;
+                this.positions[clipOffset*12 + 6 + 2] = 0;
               }
 
               if (i < this.getLOD() - 1) {
-                direction = -this.getLOD();
-                this.positions[offset + direction + 6 + 2] = 0;
-                this.positions[offset + direction + 9 + 2] = 0;
+                clipOffset = k * (this.getLOD() * this.getLOD())
+                  + (this.getLOD() - 1 - i + 1) * (this.getLOD())
+                  + (this.getLOD() - 1 - (j));
+
+                this.positions[clipOffset*12 + 3 + 2] = 0;
+                this.positions[clipOffset*12 + 6 + 2] = 0;
               }
-              */
+              
             }
             offset += 12;
             clipOffset++;

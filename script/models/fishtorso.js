@@ -4,10 +4,10 @@ class FishTorso extends ProjectedModel {
     constructor() {
       super();
       this.size = 3.5;
-      this.LOD = 48;
+      this.LOD = 24;
       this.fat = 0.3;
       this.clipLimit = 150;
-      this.clampLimit = 40;
+      this.clampLimit = 0;
       //this.vertexCount = 6 * (this.LOD * this.LOD) * 2;
     }
   
