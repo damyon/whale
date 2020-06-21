@@ -421,7 +421,7 @@ class ProjectedModel extends Drawable {
             this.positions[offset++] = offsetZ4 * heightOffset * inverse;
             if (clip4 < this.clampLimit) {
               this.positions[offset - 1] = 0;
-            } 
+            }
         
             if ((clip1 + clip2 + clip3 + clip4) < (this.clipLimit - 0.9)) {
               if (inverse == 1) {
@@ -430,12 +430,60 @@ class ProjectedModel extends Drawable {
             }
             clipOffset++;
           }
-        
         }
       }
 
-      let posIndex = 0;
+      clipOffset = 0;
+      offset = 0;
+      let direction = 0;
+      for (k = 0; k < 2; k++) {
+        for (i = this.getLOD() - 1; i >= 0; i--) {
+          for (j = this.getLOD() - 1; j >= 0; j--) {
+            clipOffset = k * (this.getLOD() * this.getLOD())
+               + (this.getLOD() - 1 - i) * (this.getLOD())
+               + (this.getLOD() - 1 - j);
+            if (clipList.includes(clipOffset)) {
+              if (j > 0) {
 
+                clipOffset = k * (this.getLOD() * this.getLOD())
+               + (this.getLOD() - 1 - i) * (this.getLOD())
+               + (this.getLOD() - 1 - (j-1));
+
+                this.positions[clipOffset*12 + 3 + 2] = 0;
+                this.positions[clipOffset*12 + 6 + 2] = 0;
+              }
+
+              if (j < this.getLOD() - 1) {
+                 clipOffset = k * (this.getLOD() * this.getLOD())
+               + (this.getLOD() - 1 - i) * (this.getLOD())
+               + (this.getLOD() - 1 - (j+1));
+
+               this.positions[clipOffset*12 + 3 + 2] = 0;
+               this.positions[clipOffset*12 + 6 + 2] = 0;
+             }
+/*
+
+              if (i > 0) {
+                direction = this.getLOD();
+                this.positions[offset + direction + 0 + 2] = 0;
+                this.positions[offset + direction + 3 + 2] = 0;
+              }
+
+              if (i < this.getLOD() - 1) {
+                direction = -this.getLOD();
+                this.positions[offset + direction + 6 + 2] = 0;
+                this.positions[offset + direction + 9 + 2] = 0;
+              }
+              */
+            }
+            offset += 12;
+            clipOffset++;
+          }
+        }
+        clipOffset = 0;
+      }
+
+      let posIndex = 0;
       
       gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.positions),
                     gl.STATIC_DRAW);

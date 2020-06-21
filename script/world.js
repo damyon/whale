@@ -78,7 +78,7 @@ function main() {
   cloud2.setPosition(gl, -100, 400, 1280);
   cloud3.setPosition(gl, -1280, 400, 100);
   cloud4.setPosition(gl, 1280, 400, -100);
-  shark.setPosition(gl, 5, -1.5, 76);
+  shark.setPosition(gl, 5, 1.5, 76);
   for (i = 0; i < fishCount; i++) {
     fish[i].setPosition(gl, 10, -1.8, 78 - i);
   }
