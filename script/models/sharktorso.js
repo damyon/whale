@@ -4,8 +4,8 @@ class SharkTorso extends ProjectedModel {
   constructor() {
     super();
     this.size = 4;
-    this.LOD = 20;
-    this.fat = 0.4;
+    this.LOD = 32;
+    this.fat = 0.5;
     this.clipLimit = 150;
     this.clampLimit = 0;
    // this.pivotOffset = -2.5;

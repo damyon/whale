@@ -78,9 +78,9 @@ function main() {
   cloud2.setPosition(gl, -100, 400, 1280);
   cloud3.setPosition(gl, -1280, 400, 100);
   cloud4.setPosition(gl, 1280, 400, -100);
-  shark.setPosition(gl, 10, -2.2, 116);
+  shark.setPosition(gl, 50, -2.2, -116);
   for (i = 0; i < fishCount; i++) {
-    fish[i].setPosition(gl, -15 + 10*i, -1.8, 78 - i);
+    fish[i].setPosition(gl, 100*Math.sin(10*i), -1.8, 100*Math.cos(10*i));
   }
 
   boat.setPositionRotation(gl, 0, 12, 70, 0);

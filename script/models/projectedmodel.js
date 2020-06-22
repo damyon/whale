@@ -526,6 +526,8 @@ class ProjectedModel extends Drawable {
               this.positions[offset - 1] = 0;
             }
         
+            // We are below the clip limit - but 1 is a special number reserved
+            // for clamping - don't clip a clamp.
             if ((clip1 + clip2 + clip3 + clip4) < (this.clipLimit - 0.9)
                 && (clip1 != 1 && clip2 != 1 && clip3 != 1 && clip4 != 1)) {
               if (inverse == 1) {
@@ -536,62 +538,6 @@ class ProjectedModel extends Drawable {
           }
         }
       }
-
-      /*
-      clipOffset = 0;
-      offset = 0;
-      let direction = 0;
-      for (k = 0; k < 2; k++) {
-        for (i = this.getLOD() - 1; i >= 0; i--) {
-          for (j = this.getLOD() - 1; j >= 0; j--) {
-            clipOffset = k * (this.getLOD() * this.getLOD())
-               + (this.getLOD() - 1 - i) * (this.getLOD())
-               + (this.getLOD() - 1 - j);
-            if (clipList.includes(clipOffset)) {
-              if (j > 0) {
-                clipOffset = k * (this.getLOD() * this.getLOD())
-                  + (this.getLOD() - 1 - i) * (this.getLOD())
-                  + (this.getLOD() - 1 - (j-1));
-
-                this.positions[clipOffset*12 + 3 + 2] = 0;
-                this.positions[clipOffset*12 + 6 + 2] = 0;
-              }
-
-              if (j < this.getLOD() - 1) {
-                clipOffset = k * (this.getLOD() * this.getLOD())
-                  + (this.getLOD() - 1 - i) * (this.getLOD())
-                  + (this.getLOD() - 1 - (j+1));
-
-                this.positions[clipOffset*12 + 3 + 2] = 0;
-                this.positions[clipOffset*12 + 6 + 2] = 0;
-              }
-
-              if (i > 0) {
-                clipOffset = k * (this.getLOD() * this.getLOD())
-                  + (this.getLOD() - 1 - i - 1) * (this.getLOD())
-                  + (this.getLOD() - 1 - (j));
-
-                this.positions[clipOffset*12 + 3 + 2] = 0;
-                this.positions[clipOffset*12 + 6 + 2] = 0;
-              }
-
-              if (i < this.getLOD() - 1) {
-                clipOffset = k * (this.getLOD() * this.getLOD())
-                  + (this.getLOD() - 1 - i + 1) * (this.getLOD())
-                  + (this.getLOD() - 1 - (j));
-
-                this.positions[clipOffset*12 + 3 + 2] = 0;
-                this.positions[clipOffset*12 + 6 + 2] = 0;
-              }
-              
-            }
-            offset += 12;
-            clipOffset++;
-          }
-        }
-        clipOffset = 0;
-      }
-      */
 
       let posIndex = 0;
       
