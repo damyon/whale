@@ -333,6 +333,109 @@ class ProjectedModel extends Drawable {
       one = - this.size;
       raw = this.flip(raw, this.getLOD() + 1);
       raw = this.spin(raw, this.getLOD() + 1);
+      
+      clipOffset = 0;
+
+      let i2 = 0, j2 = 0;
+      for (k = 0; k < 1; k++) {
+        for (i = this.getLOD() - 1; i >= 0; i--) {
+          for (j = this.getLOD() - 1; j >= 0; j--) {
+            // Consider the map dimensions.
+            
+            index = ((i * (this.getLOD() + 1)) + (j + 1)) * 4;
+            index = raw.length - index;
+            clip1 = raw[index];
+            index = (((i + 1) * (this.getLOD() + 1)) + (j + 1)) * 4;
+            index = raw.length - index;
+            clip2 = raw[index];
+            index = (((i + 1) * (this.getLOD() + 1)) + (j + 2)) * 4;
+            index = raw.length - index;
+            clip3 = raw[index];
+            index = ((i * (this.getLOD() + 1)) + (j + 2)) * 4;
+            index = raw.length - index;
+            clip4 = raw[index];
+            
+            if ((clip1 + clip2 + clip3 + clip4) < (this.clipLimit - 0.9)) {
+              // This a clip candidate - we want to clamp all the neighbours.
+              clampList.push({ i: i, j: j});
+            }
+          }
+        }
+      }
+
+      let clamp = null;
+
+      for (clamp of clampList) {
+        if (j > 0) {
+          i2 = clamp.i;
+          j2 = clamp.j - 1;
+
+          index = ((i2 * (this.getLOD() + 1)) + (j2 + 1)) * 4;
+          index = raw.length - index;
+          if (raw[index] > 1) {
+            raw[index] = 1;
+          }
+          index = (((i2 + 1) * (this.getLOD() + 1)) + (j2 + 1)) * 4;
+          index = raw.length - index;
+          if (raw[index] > 1) {
+            raw[index] = 1;
+          }
+        }
+        
+        // Right
+        if (j < this.getLOD() - 1) {
+          i2 = clamp.i;
+          j2 = clamp.j + 1;
+
+          index = (((i2 + 1) * (this.getLOD() + 1)) + (j2 + 2)) * 4;
+          index = raw.length - index;
+          if (raw[index] > 1) {
+            raw[index] = 1;
+          }
+          index = ((i2 * (this.getLOD() + 1)) + (j2 + 2)) * 4;
+          index = raw.length - index;
+          if (raw[index] > 1) {
+            raw[index] = 1;
+          }
+        }
+        // Up
+        if (i > 0) {
+          i2 = clamp.i - 1;
+          j2 = clamp.j;
+
+          index = (((i2 + 1) * (this.getLOD() + 1)) + (j2 + 1)) * 4;
+          index = raw.length - index;
+          if (raw[index] > 1) {
+            raw[index] = 1;
+          }
+          index = (((i2 + 1) * (this.getLOD() + 1)) + (j2 + 2)) * 4;
+          index = raw.length - index;
+          if (raw[index] > 1) {
+            raw[index] = 1;
+          }
+        }
+
+        // Down
+        if (i < this.getLOD() - 1) {
+          i2 = clamp.i + 1;
+          j2 = clamp.j;
+
+          index = ((i2 * (this.getLOD() + 1)) + (j2 + 1)) * 4;
+          index = raw.length - index;
+          if (raw[index] > 1) {
+            raw[index] = 1;
+          }
+          index = ((i2 * (this.getLOD() + 1)) + (j2 + 2)) * 4;
+          index = raw.length - index;
+          if (raw[index] > 1) {
+            raw[index] = 1;
+          }
+        }
+      }
+      // HERE
+
+      clipOffset = 0;
+      offset = 0;
       for (k = 0; k < 2; k++) {
         for (i = this.getLOD() - 1; i >= 0; i--) {
           for (j = this.getLOD() - 1; j >= 0; j--) {
@@ -423,7 +526,8 @@ class ProjectedModel extends Drawable {
               this.positions[offset - 1] = 0;
             }
         
-            if ((clip1 + clip2 + clip3 + clip4) < (this.clipLimit - 0.9)) {
+            if ((clip1 + clip2 + clip3 + clip4) < (this.clipLimit - 0.9)
+                && (clip1 != 1 && clip2 != 1 && clip3 != 1 && clip4 != 1)) {
               if (inverse == 1) {
                 clipList.push(clipOffset);
               }
@@ -433,6 +537,7 @@ class ProjectedModel extends Drawable {
         }
       }
 
+      /*
       clipOffset = 0;
       offset = 0;
       let direction = 0;
@@ -486,6 +591,7 @@ class ProjectedModel extends Drawable {
         }
         clipOffset = 0;
       }
+      */
 
       let posIndex = 0;
       
