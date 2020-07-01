@@ -15,7 +15,6 @@ class Terrain extends Drawable {
     this.rockPositions = [];
     this.bushPositions = [];
     this.treePositions = [];
-    this.foamPositions = [];
     this.terrainPositions = [];
     this.bushDensity = 256;
     this.bushMinHeight = 0.2;
@@ -53,19 +52,6 @@ class Terrain extends Drawable {
   }
 
   /**
-   * Create a list of foam depending on the density of the terrain.
-   */
-  createFoam() {
-    let foam = [], i = 0;
-
-    for (i = 0; i < this.foamDensity; i++) {
-      foam.push(new Foam(i));
-    }
-
-    return foam;
-  }
-
-  /**
    * Create a list of trees depending on the density of the terrain.
    */
   createTrees() {
@@ -76,18 +62,6 @@ class Terrain extends Drawable {
     }
 
     return trees;
-  }
-
-  setFoamPositions(gl, foam) {
-    let i = 0;
-
-    for (i = 0; i < this.foamDensity && i < this.foamPositions.length; i++) {
-      let x = this.foamPositions[i].x,
-          y = this.foamPositions[i].y,
-          z = this.foamPositions[i].z;
-
-      foam[i].setPosition(gl, x, y, z);
-    }
   }
 
   setTreePositions(gl, trees) {
@@ -411,15 +385,7 @@ class Terrain extends Drawable {
             lastTreePosition = lookupOffset;
           }
 
-          if (this.terrainPositions[lookupOffset + 1] > this.foamMinHeight &&
-              this.terrainPositions[lookupOffset + 1] < this.foamMaxHeight &&
-              this.foamPositions.length < this.foamDensity) {
-            this.foamPositions.push({
-              x: this.terrainPositions[lookupOffset],
-              y: this.terrainPositions[lookupOffset + 1],
-              z: this.terrainPositions[lookupOffset + 2]
-            });
-          }
+          
         }
       }
 

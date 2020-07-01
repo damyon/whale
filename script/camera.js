@@ -65,6 +65,7 @@ class Camera {
 
       varying vec2 vDepthUv;
       varying vec4 shadowPos;
+      varying vec3 worldPos;
 
       void main (void) {
         highp vec3 directionalVector = normalize(vec3(0, 1, 2));
@@ -73,6 +74,7 @@ class Camera {
 
         gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
 
+        worldPos = aVertexPosition;
         shadowPos = texUnitConverter * lightProjectionMatrix * lightMViewMatrix * vec4(aVertexPosition, 1.0);
 
         vTextureCoord = aTextureCoord;
@@ -89,6 +91,7 @@ class Camera {
       uniform sampler2D uSampler;
       uniform vec3 uColor;
       uniform int isWater;
+      varying vec3 worldPos;
 
       float decodeFloat (vec4 color) {
         const vec4 bitShift = vec4(
@@ -130,9 +133,15 @@ class Camera {
 
         if (isWater == 1) {
           amountInLight = 0.5;
+
+          
         } else if (isWater == 2) {
           amountInLight = 1.9;
         }
+        if (worldPos.y > -1.0 && worldPos.y < -0.05) {
+          amountInLight += 4.0 * (worldPos.y + 1.0);
+        }
+
 
         gl_FragColor = vec4(ambientLight * texelColor.rgb + directionalLightColor * amountInLight * uColor, texelColor.a);
 
