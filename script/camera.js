@@ -164,10 +164,13 @@ class Camera {
         } else if (isWater == 2) {
           amountInLight = 1.9;
         }
-        if (worldPos.y > -1.0 && worldPos.y < -0.01 && isSand == 1) {
-          amountInLight += 4.0 * (worldPos.y + 1.0);
+        if (worldPos.y > -1.5 && worldPos.y < -0.01 && isSand == 1) {
+          amountInLight += 2.0 * (worldPos.y + 1.5);
         }
-
+        if (worldPos.y > -0.1 && worldPos.y < 0.2 && isSand == 1) {
+          amountInLight -= 0.2 * (worldPos.y + 1.0);
+        }
+        amountInLight = min(amountInLight, 1.8);
 
         gl_FragColor = vec4(ambientLight * texelColor.rgb + directionalLightColor * amountInLight * uColor, texelColor.a);
 
@@ -178,7 +181,7 @@ class Camera {
 
         vec4 n[9];
         float lineWidth = 0.2;
-        float outlineCutoff = 0.2;
+        float outlineCutoff = 0.1;
         makeKernel( n, uSampler, vTextureCoord.st, uCanvasWidth*lineWidth, uCanvasHeight*lineWidth);
 
         vec4 sobel_edge_h = n[2] + (2.0*n[5]) + n[8] - (n[0] + (2.0*n[3]) + n[6]);
@@ -186,7 +189,7 @@ class Camera {
         vec4 sobel = sqrt((sobel_edge_h * sobel_edge_h) + (sobel_edge_v * sobel_edge_v));
         vec4 edgeColor = vec4( 1.0 - sobel.rgb, 1.0 );
 
-        if (edgeColor.r + edgeColor.g + edgeColor.b < outlineCutoff && isWater >= 0) {
+        if (edgeColor.r + edgeColor.g + edgeColor.b < outlineCutoff && isWater == 0) {
           gl_FragColor = vec4(0.1, 0.1, 0.1, 0.3);
         }
         
