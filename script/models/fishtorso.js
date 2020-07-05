@@ -8,6 +8,7 @@ class FishTorso extends ProjectedModel {
       this.fat = 0.4;
       this.clipLimit = 150;
       this.clampLimit = 0;
+      this.lowestLOD = 3;
     }
   
     /**
