@@ -25,7 +25,6 @@ class Terrain extends Drawable {
     this.foamDensity = 64;
     this.foamMinHeight = -0.3;
     this.foamMaxHeight = 0.1;
-   
   }
 
   /**

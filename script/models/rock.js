@@ -13,7 +13,7 @@ class Rock extends Drawable {
 
     this.sourcePositions = [];
     this.index = index + 1;
-
+    this.blend = 1;
     this.currentLOD = 3;
     this.lowestLOD = 1;
     this.highestLOD = 3;

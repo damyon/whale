@@ -177,7 +177,8 @@ class Camera {
 
 
         vec4 n[9];
-        float lineWidth = 0.1;
+        float lineWidth = 0.2;
+        float outlineCutoff = 0.2;
         makeKernel( n, uSampler, vTextureCoord.st, uCanvasWidth*lineWidth, uCanvasHeight*lineWidth);
 
         vec4 sobel_edge_h = n[2] + (2.0*n[5]) + n[8] - (n[0] + (2.0*n[3]) + n[6]);
@@ -185,7 +186,7 @@ class Camera {
         vec4 sobel = sqrt((sobel_edge_h * sobel_edge_h) + (sobel_edge_v * sobel_edge_v));
         vec4 edgeColor = vec4( 1.0 - sobel.rgb, 1.0 );
 
-        if (edgeColor.r + edgeColor.g + edgeColor.b < 0.1 && isWater == 0) {
+        if (edgeColor.r + edgeColor.g + edgeColor.b < outlineCutoff && isWater >= 0) {
           gl_FragColor = vec4(0.1, 0.1, 0.1, 0.3);
         }
         
