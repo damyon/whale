@@ -93,9 +93,6 @@ function main() {
    * Camera shader setup
    */
 
-  // We enable our vertex attributes for our camera's shader.
-  var vertexPositionAttrib = camera.getVertexPositionAttrib(gl);
-
   /**
    * Light shader setup
    */
@@ -173,6 +170,9 @@ function main() {
       // Make the canvas the same size
       canvas.width  = displayWidth;
       canvas.height = displayHeight;
+
+      camera.width = displayWidth;
+      camera.height = displayHeight;
     }
   }
 

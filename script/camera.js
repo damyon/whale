@@ -77,6 +77,7 @@ class Camera {
 
         depthPos = gl_Position;
         worldPos = aVertexPosition;
+
         shadowPos = texUnitConverter * lightProjectionMatrix * lightMViewMatrix * vec4(aVertexPosition, 1.0);
 
         vTextureCoord = aTextureCoord;
@@ -94,10 +95,13 @@ class Camera {
       uniform sampler2D depthColorTexture;
       uniform sampler2D uSampler;
       uniform vec3 uColor;
+      uniform float uCanvasWidth;
+      uniform float uCanvasHeight;
       uniform int isWater;
+      uniform int isSand;
       varying vec3 worldPos;
 
-      float decodeFloat (vec4 color) {
+      float decodeFloat(vec4 color) {
         const vec4 bitShift = vec4(
           1.0 / (256.0 * 256.0 * 256.0),
           1.0 / (256.0 * 256.0),
@@ -107,11 +111,29 @@ class Camera {
         return dot(color, bitShift);
       }
 
+      void makeKernel(inout vec4 n[9], sampler2D tex, vec2 coord, float width, float height) {
+        float w = 1.0 / width;
+        float h = 1.0 / height;
+
+        n[0] = texture2D(tex, coord + vec2( -w, -h));
+        n[1] = texture2D(tex, coord + vec2(0.0, -h));
+        n[2] = texture2D(tex, coord + vec2(  w, -h));
+        n[3] = texture2D(tex, coord + vec2( -w, 0.0));
+        n[4] = texture2D(tex, coord);
+        n[5] = texture2D(tex, coord + vec2(  w, 0.0));
+        n[6] = texture2D(tex, coord + vec2( -w, h));
+        n[7] = texture2D(tex, coord + vec2(0.0, h));
+        n[8] = texture2D(tex, coord + vec2(  w, h));
+      }
+
       void main(void) {
         highp vec4 texelColor = texture2D(uSampler, vTextureCoord);
         highp vec3 ambientLight = vec3(0.5, 0.5, 0.5);
         highp vec3 directionalLightColor = vec3(0.2, 0.2, 0.2);
         vec3 fragmentDepth = shadowPos.xyz;
+        vec3 worldDepth = depthPos.xyz;
+        float stepU = 1.0 / uCanvasWidth;
+        float stepV = 1.0 / uCanvasHeight;
         float shadowAcneRemover = 0.005;
         fragmentDepth.z -= shadowAcneRemover;
 
@@ -131,10 +153,6 @@ class Camera {
             if (fragmentDepth.z < texelDepth) {
               amountInLight += 1.0;
             }
-
-            if (depthPos.z > 100.0) {
-              amountInLight += 10.0;
-            }
           }
         }
         amountInLight /= 49.0;
@@ -146,7 +164,7 @@ class Camera {
         } else if (isWater == 2) {
           amountInLight = 1.9;
         }
-        if (worldPos.y > -1.0 && worldPos.y < -0.05) {
+        if (worldPos.y > -1.0 && worldPos.y < -0.01 && isSand == 1) {
           amountInLight += 4.0 * (worldPos.y + 1.0);
         }
 
@@ -157,7 +175,22 @@ class Camera {
         gl_FragColor.g = floor(gl_FragColor.g / 0.05) * 0.05;
         gl_FragColor.b = floor(gl_FragColor.b / 0.05) * 0.05;
 
+
+        vec4 n[9];
+        float lineWidth = 0.1;
+        makeKernel( n, uSampler, vTextureCoord.st, uCanvasWidth*lineWidth, uCanvasHeight*lineWidth);
+
+        vec4 sobel_edge_h = n[2] + (2.0*n[5]) + n[8] - (n[0] + (2.0*n[3]) + n[6]);
+        vec4 sobel_edge_v = n[0] + (2.0*n[1]) + n[2] - (n[6] + (2.0*n[7]) + n[8]);
+        vec4 sobel = sqrt((sobel_edge_h * sobel_edge_h) + (sobel_edge_v * sobel_edge_v));
+        vec4 edgeColor = vec4( 1.0 - sobel.rgb, 1.0 );
+
+        if (edgeColor.r + edgeColor.g + edgeColor.b < 0.1 && isWater == 0) {
+          gl_FragColor = vec4(0.1, 0.1, 0.1, 0.3);
+        }
+        
       }
+
     `;
     this.cameraVertexShader = null;
     this.cameraFragmentShader = null;
@@ -177,10 +210,15 @@ class Camera {
     this.uLightMatrix = null;
     this.uLightProjection = null;
     this.uColor = null;
+    this.uCanvasHeight = 0;
+    this.uCanvasWidth = 0;
     this.isWater = null;
+    this.isSand = null;
     this.cameraMatrix = null;
     this.cameraNormalMatrix = null;
     this.rock = 0;
+    this.width = 0;
+    this.height = 0;
   }
 
   setRock(rock) {
@@ -228,12 +266,6 @@ class Camera {
 
     gl.detachShader(this.lightShaderProgram, this.lightFragmentShader);
     gl.deleteShader(this.lightFragmentShader);
-  }
-
-  getVertexPositionAttrib(gl) {
-    let vertexPositionAttrib = gl.getAttribLocation(this.lightShaderProgram, 'aVertexPosition');
-    gl.enableVertexAttribArray(vertexPositionAttrib);
-    return vertexPositionAttrib;
   }
 
   useLightShader(gl) {
@@ -296,8 +328,14 @@ class Camera {
     this.uLightMatrix = gl.getUniformLocation(this.cameraShaderProgram, 'lightMViewMatrix');
     this.uLightProjection = gl.getUniformLocation(this.cameraShaderProgram, 'lightProjectionMatrix');
     this.uColor = gl.getUniformLocation(this.cameraShaderProgram, 'uColor');
+    this.uCanvasWidth = gl.getUniformLocation(this.cameraShaderProgram, 'uCanvasWidth');
+    this.uCanvasHeight = gl.getUniformLocation(this.cameraShaderProgram, 'uCanvasHeight');
+    
     this.isWater = gl.getUniformLocation(this.cameraShaderProgram, 'isWater');
+    this.isSand = gl.getUniformLocation(this.cameraShaderProgram, 'isSand');
 
+    this.width = gl.canvas.clientWidth;
+    this.height = gl.canvas.clientHeight;
     gl.uniformMatrix4fv(this.uLightMatrix, false, this.lightModelViewMatrix);
     gl.uniformMatrix4fv(this.uLightProjection, false, this.lightProjectionMatrix);
     let aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
@@ -338,7 +376,9 @@ class Camera {
     mat4.translate(this.cameraMatrix, this.cameraMatrix, [controls.x, controls.y + this.rock, controls.z]);
     
     gl.uniform3fv(this.uColor, [0.0, 0.0, 0.0]);
-
+    gl.uniform1f(this.uCanvasWidth, this.width);
+    gl.uniform1f(this.uCanvasHeight, this.height);
+    
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.shadowDepthTexture);
     gl.uniform1i(this.samplerUniform, 0);
@@ -352,6 +392,7 @@ class Camera {
 
     gl.uniform3fv(this.uColor, [0.2, 0.2, 0.2]);
     gl.uniform1i(this.isWater, 0);
+    gl.uniform1i(this.isSand, 0);
   }
 
   finishCameraFrame(gl) {

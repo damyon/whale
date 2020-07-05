@@ -449,6 +449,7 @@ class Terrain extends Drawable {
     // buffer into the vertexPosition attribute
     if (shadow) {
       gl.uniform1i(camera.isWater, 0);
+      gl.uniform1i(camera.isSand, 1);
     }
 
     {
