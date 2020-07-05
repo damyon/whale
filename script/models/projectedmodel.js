@@ -2,7 +2,7 @@ class ProjectedModel extends Drawable {
   constructor() {
     super();
     this.size = 3.5;
-    this.LOD = 42;
+    this.LOD = 48;
     this.fat = 0.6;
     this.x = 0;
     this.y = 0;
@@ -651,6 +651,7 @@ class ProjectedModel extends Drawable {
     if (shadow) {
       gl.uniform1i(camera.isWater, 0);
     }
+    gl.uniform1i(camera.isSand, 0);
 
     {
       const numComponents = 3;

@@ -283,6 +283,7 @@ class Leaves extends Drawable {
     if (shadow) {
       gl.uniform1i(camera.isWater, 0);
     }
+    gl.uniform1i(camera.isSand, 0);
     {
       const numComponents = 3;
       const type = gl.FLOAT;

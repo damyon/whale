@@ -38,6 +38,7 @@ class Drawable {
   }
 
   draw(gl) {
+    gl.uniform1i(camera.isSand, 0);
     var modelViewMatrix = mat4.create();
 
     mat4.rotateY(modelViewMatrix, modelViewMatrix, this.rorateY);

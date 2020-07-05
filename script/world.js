@@ -42,7 +42,7 @@ function main() {
   let shark = new Shark();
   let throttleLOD = 10.0;
   let lastLOD = 0;
-  let targetFPS = 5;
+  let targetFPS = 15;
   let fishCount = 5;
   let i = 0;
 
@@ -76,9 +76,9 @@ function main() {
   cloud2.setPosition(gl, -100, 400, 1280);
   cloud3.setPosition(gl, -1280, 400, 100);
   cloud4.setPosition(gl, 1280, 400, -100);
-  shark.setPosition(gl, 50, -2.6, -116);
+  shark.setPosition(gl, 50, -3, -116);
   for (i = 0; i < fishCount; i++) {
-    fish[i].setPosition(gl, 100*Math.sin(10*i), -2.2, 100*Math.cos(10*i));
+    fish[i].setPosition(gl, 100*Math.sin(10*i), -3, 100*Math.cos(10*i));
   }
 
   boat.setPositionRotation(gl, 0, 12, 70, 0);
