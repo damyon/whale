@@ -120,17 +120,20 @@ class Controls {
   }
 
   processKeys(terrain, boatWidth, boatLength) {
+    let turnSpeed = 0.2;
+    let moveSpeed = 0.3;
+
     if (this.actionForward) {
-      this.forwardSpeed += 0.1;
+      this.forwardSpeed += moveSpeed;
     }
     if (this.actionBackward) {
-      this.forwardSpeed -= 0.1;
+      this.forwardSpeed -= moveSpeed;
     }
     if (this.actionLeft) {
-      this.boatY -= 0.01;
+      this.boatY -= turnSpeed;
     }
     if (this.actionRight) {
-      this.boatY += 0.01;
+      this.boatY += turnSpeed;
     }
     if (this.forwardSpeed) {
       var positionChange = this.moveForward();
@@ -157,8 +160,8 @@ class Controls {
     mat4.invert(cameraMatrix, cameraMatrix);
 
     // Speed limit.
-    this.forwardSpeed = Math.min(this.forwardSpeed, 0.6);
-    this.forwardSpeed = Math.max(this.forwardSpeed, -0.6);
+    this.forwardSpeed = Math.min(this.forwardSpeed, 1.6);
+    this.forwardSpeed = Math.max(this.forwardSpeed, -1.6);
     
     return [cameraMatrix[2] * this.forwardSpeed,
       cameraMatrix[6] * this.forwardSpeed,
