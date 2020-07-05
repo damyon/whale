@@ -42,7 +42,7 @@ function main() {
   let shark = new Shark();
   let throttleLOD = 10.0;
   let lastLOD = 0;
-  let targetFPS = 15;
+  let targetFPS = 5;
   let fishCount = 5;
   let i = 0;
 

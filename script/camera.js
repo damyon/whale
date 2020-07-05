@@ -121,53 +121,33 @@ class Camera {
         // So if 4 out of 9 fragments that we check are in the shadow then we'll say that
         // this fragment is 4/9ths in the shadow so it'll be a little brighter than something
         // that is 9/9ths in the shadow.
-        float centerDepth = decodeFloat(texture2D(depthColorTexture, fragmentDepth.xy * texelSize));
-        float averageDepthDiff = 0.0;
-        float texelDepth = 0.0;
-
         for (int x = -3; x <= 3; x++) {
           for (int y = -3; y <= 3; y++) {
-            texelDepth = decodeFloat(texture2D(depthColorTexture, fragmentDepth.xy + vec2(x, y) * texelSize));
+            float texelDepth = decodeFloat(texture2D(depthColorTexture, fragmentDepth.xy + vec2(x, y) * texelSize));
             if (fragmentDepth.z < texelDepth) {
               amountInLight += 1.0;
-            } 
+            }
           }
         }
-  
-        
-        for (int i = -3; i <= 3; i++) {
-          for (int j = -3; j <= 3; j++) {
-            highp vec4 texelColor2 = texture2D(uSampler, vTextureCoord + vec2(i, j) / 10.0);
-            averageDepthDiff += abs(texelColor2.r - texelColor.r);
-            averageDepthDiff += abs(texelColor2.g - texelColor.g);
-            averageDepthDiff += abs(texelColor2.b - texelColor.b);
-          }
-        }
-        
-
-        averageDepthDiff /= 27.0;
         amountInLight /= 49.0;
 
         if (isWater == 1) {
           amountInLight = 0.5;
+
+          
         } else if (isWater == 2) {
           amountInLight = 1.9;
         }
-        // Foam.
         if (worldPos.y > -1.0 && worldPos.y < -0.05) {
           amountInLight += 4.0 * (worldPos.y + 1.0);
         }
+
 
         gl_FragColor = vec4(ambientLight * texelColor.rgb + directionalLightColor * amountInLight * uColor, texelColor.a);
 
         gl_FragColor.r = floor(gl_FragColor.r / 0.05) * 0.05;
         gl_FragColor.g = floor(gl_FragColor.g / 0.05) * 0.05;
         gl_FragColor.b = floor(gl_FragColor.b / 0.05) * 0.05;
-
-        if (averageDepthDiff > 2.0) {
-          gl_FragColor.a -= 6.0;
-        }
-        
 
       }
     `;
