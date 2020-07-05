@@ -65,6 +65,7 @@ class Camera {
 
       varying vec2 vDepthUv;
       varying vec4 shadowPos;
+      varying vec4 depthPos;
       varying vec3 worldPos;
 
       void main (void) {
@@ -74,6 +75,7 @@ class Camera {
 
         gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
 
+        depthPos = gl_Position;
         worldPos = aVertexPosition;
         shadowPos = texUnitConverter * lightProjectionMatrix * lightMViewMatrix * vec4(aVertexPosition, 1.0);
 
@@ -85,6 +87,8 @@ class Camera {
 
       varying vec2 vDepthUv;
       varying vec4 shadowPos;
+      varying vec4 depthPos;
+      
       varying highp vec2 vTextureCoord;
 
       uniform sampler2D depthColorTexture;
@@ -126,6 +130,10 @@ class Camera {
             float texelDepth = decodeFloat(texture2D(depthColorTexture, fragmentDepth.xy + vec2(x, y) * texelSize));
             if (fragmentDepth.z < texelDepth) {
               amountInLight += 1.0;
+            }
+
+            if (depthPos.z > 100.0) {
+              amountInLight += 10.0;
             }
           }
         }
