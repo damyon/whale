@@ -8,6 +8,7 @@ class ProjectedModel extends Drawable {
     this.y = 0;
     this.z = 0;
     this.angle = 0;
+    this.spinAngle = -Math.PI / 2;
     this.globalAngle = 0;
     this.pivotOffset = 0;
     this.centerOffset = 0;
@@ -67,13 +68,16 @@ class ProjectedModel extends Drawable {
     this.y = y;
     this.z = z;
 
-    let translatedPositions = [], i = 0, c = 0, s = 0;
+    let translatedPositions = [], i = 0, c = 0, s = 0, spinC = 0, spinS = 0;
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
     translatedPositions = this.positions.slice();
 
     // Now locally rotate.
     c = Math.cos(this.angle);
     s = Math.sin(this.angle);
+
+    spinC = Math.cos(this.spinAngle);
+    spinS = Math.sin(this.spinAngle);
     
     // Move - half
     for (i = 0; i < this.getVertexCount(); i++) {
@@ -87,6 +91,15 @@ class ProjectedModel extends Drawable {
 
       translatedPositions[i * 3] = x * c - z * s;
       translatedPositions[i * 3 + 2] = x * s + z * c;
+    }
+
+    // Local spin
+    for (i = 0; i < this.getVertexCount(); i++) {
+      let y = translatedPositions[i * 3 + 1];
+      let z = translatedPositions[i * 3 + 2];
+
+      translatedPositions[i * 3 + 1] = y * spinC - z * spinS;
+      translatedPositions[i * 3 + 2] = y * spinS + z * spinC;
     }
     
     // Now global rotation.

@@ -3,9 +3,9 @@ class WhaleTorso extends ProjectedModel {
 
   constructor() {
     super();
-    this.size = 4;
-    this.fat = 0.5;
-    this.LOD = 32;
+    this.size = 16;
+    this.fat = 2;
+    this.LOD = 128;
     
     
     this.clipLimit = 150;

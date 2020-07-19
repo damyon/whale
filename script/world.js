@@ -99,7 +99,7 @@ function main() {
   cloud2.setPosition(gl, -100, 400, 1280);
   cloud3.setPosition(gl, -1280, 400, 100);
   cloud4.setPosition(gl, 1280, 400, -100);
-  whale.setPosition(gl, 10, 4, 80);
+  whale.setPosition(gl, 10, 0, 80);
   /*
   for (i = 0; i < fishCount; i++) {
     fish[i].setPosition(gl, 100*Math.sin(10*i), -3, 100*Math.cos(10*i));
