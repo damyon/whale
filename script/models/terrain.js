@@ -240,7 +240,7 @@ class Terrain extends Drawable {
     this.loadTexture(gl, 'texture/sand.jpg');
 
     // Load the heightmap.
-    this.loadHeightmap(gl, 'texture/island-height.png');
+    // this.loadHeightmap(gl, 'texture/island-height.png');
 
     return this.buffers;
   }
@@ -450,7 +450,7 @@ class Terrain extends Drawable {
       gl.uniform1i(camera.isWater, 0);
       
     }
-    gl.uniform1i(camera.isSand, 1);
+    //gl.uniform1i(camera.isSand, 1);
 
     {
       const numComponents = 3;

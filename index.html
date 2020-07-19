@@ -2,38 +2,48 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Island</title>
+    <title>Whaley good</title>
     <link rel="stylesheet" href="style/webgl.css" type="text/css">
   </head>
 
-  <body style="margin: 0; ">
-    <canvas id="glcanvas" width="1024" height="768" style="width: 100vw; height: 100vh; border: 0;"></canvas>
+  <body style="margin: 0; font-family: arial; font-weight: bold;">
+    <canvas id="glcanvas" width="1024" height="768" style="width: 100vw; height: 100vh; border: 0; display: none;"></canvas>
+  
+    <form id="uploadform" style="width: 400px; margin-left: auto; margin-right: auto; margin-top: 50px; border: 2px solid grey; padding: 2em; background: aliceblue; border-radius: 1em;">
+      <div>
+        <label for="volume-img-src">Upload volume image file:</label>
+        <input type="file" id="volume-img-src" style="margin-top: 1em;" onchange="(new Upload()).loadVolumeImage(this, document.getElementById('preview-volume-img'))">
+      </div>
+      <div style="min-height: 150px;">
+      <img id="preview-volume-img">
+      </div>
+      <div>
+      <label for="texture-img-src">Upload texture image file:</label>
+      <input type="file" id="texture-img-src" style="margin-top: 1em;" onchange="(new Upload()).loadTextureImage(this, document.getElementById('preview-texture-img'))"><br>
+      </div>
+      <div style="min-height: 150px;">
+      <img id="preview-texture-img">
+      </div>
+      <div style="text-align: right;">
+      <button id="render-action" style="margin-top: 1em; background: darkblue; color: white; border: 2px solid white; border-radius: 1em; padding: 1em; font-weight: bold;" onclick="return startWorld()">Render</button>
+      </div>
+    </form>
   </body>
 
+
   <script src="script/gl-matrix.js"></script>
+  <script src="script/upload.js"></script>
   <script src="script/controls.js"></script>
   <script src="script/camera.js"></script>
   <script src="script/models/drawable.js"></script>
   <script src="script/models/projectedmodel.js"></script>
-  <script src="script/models/rock.js"></script>
   <script src="script/models/character.js"></script>
   <script src="script/models/main.js"></script>
   <script src="script/models/member.js"></script>
-  <script src="script/models/fishtorso.js"></script>
-  <script src="script/models/sharktorso.js"></script>
-  <script src="script/models/fishtail.js"></script>
-  <script src="script/models/sharktail.js"></script>
-  <script src="script/models/dhufish.js"></script>
-  <script src="script/models/shark.js"></script>
+  <script src="script/models/whaletorso.js"></script>
+  <script src="script/models/whale.js"></script>
   <script src="script/models/cloud.js"></script>
-  <script src="script/models/foam.js"></script>
   <script src="script/models/boat.js"></script>
-  <script src="script/models/bush.js"></script>
-  <script src="script/models/star.js"></script>
-  <script src="script/models/trunk.js"></script>
   <script src="script/models/sea.js"></script>
-  <script src="script/models/terrain.js"></script>
-  <script src="script/models/leaves.js"></script>
-  <script src="script/models/tree.js"></script>
   <script src="script/world.js"></script>
 </html>

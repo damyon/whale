@@ -119,7 +119,7 @@ class Controls {
     }
   }
 
-  processKeys(terrain, boatWidth, boatLength) {
+  processKeys(boatWidth, boatLength) {
     let turnSpeed = 0.2;
     let moveSpeed = 0.3;
 
@@ -137,15 +137,15 @@ class Controls {
     }
     if (this.forwardSpeed) {
       var positionChange = this.moveForward();
-          
+      
       let likelyX = this.x - positionChange[0] - boatWidth / 2;
       let likelyZ = this.z + positionChange[2] - boatLength / 2;
 
-      let newDepth = terrain.mapHeight(likelyX, likelyZ);
-      if (newDepth <= this.groundLimit) {
+      //let newDepth = terrain.mapHeight(likelyX, likelyZ);
+      //if (newDepth <= this.groundLimit) {
         this.x = likelyX + boatWidth / 2;
         this.z = likelyZ + boatLength / 2;
-      }
+      //}
     }
     this.forwardSpeed *= 0.9;
   }

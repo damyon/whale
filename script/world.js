@@ -1,6 +1,25 @@
 var cubeRotation = 0.0;
 
-main();
+// main();
+
+function startWorld() {
+  let preview = document.getElementById('preview-volume-img');
+  if (!preview.src) {
+    alert('Volume image not loaded.');
+    return false;
+  }
+
+  preview = document.getElementById('preview-texture-img');
+  if (!preview.src) {
+    alert('Texture image not loaded.')
+    return false;
+  }
+
+  document.getElementById('uploadform').style.display = 'none';
+  document.getElementById('glcanvas').style.display = 'block';
+  main();
+  return false;
+}
 
 //
 // Start here
@@ -29,30 +48,33 @@ function main() {
   camera.buildShaders(gl);
   camera.useCameraShader(gl);
   
-  let terrain = new Terrain();
+  //let terrain = new Terrain();
+  /*
   let rocks = terrain.createRocks();
   let bushes = terrain.createBushes();
   let trees = terrain.createTrees();
   let fish = [];
+  */
   let boat = new Boat();
   let cloud1 = new Cloud(false);
   let cloud2 = new Cloud(false);
   let cloud3 = new Cloud(true);
   let cloud4 = new Cloud(true);
-  let shark = new Shark();
+  let whale = new Whale();
   let throttleLOD = 10.0;
   let lastLOD = 0;
   let targetFPS = 15;
-  let fishCount = 5;
+  //let fishCount = 5;
   let i = 0;
 
+  /*
   for (i = 0; i < fishCount; i++) {
     fish.push(new Dhufish());
-  }
+  }*/
   
   let drawables = [
-    terrain,
-    shark,
+   // terrain,
+    whale,
     new Sea(1000, 0, 1),
     cloud1,
     cloud2,
@@ -60,6 +82,7 @@ function main() {
     cloud4,
     boat
   ];
+  /*
   for (i = 0; i < fishCount; i++) {
     drawables.unshift(fish[i]);
   }
@@ -67,7 +90,7 @@ function main() {
   drawables = drawables.concat(rocks);
   drawables = drawables.concat(bushes);
   drawables = drawables.concat(trees);
-  
+  */
   for (model of drawables) {
     model.initBuffers(gl);
   }
@@ -76,19 +99,21 @@ function main() {
   cloud2.setPosition(gl, -100, 400, 1280);
   cloud3.setPosition(gl, -1280, 400, 100);
   cloud4.setPosition(gl, 1280, 400, -100);
-  shark.setPosition(gl, 50, -3, -116);
+  whale.setPosition(gl, 10, 4, 80);
+  /*
   for (i = 0; i < fishCount; i++) {
     fish[i].setPosition(gl, 100*Math.sin(10*i), -3, 100*Math.cos(10*i));
-  }
+  }*/
 
-  boat.setPositionRotation(gl, 0, 12, 70, 0);
+  boat.setPositionRotation(gl, 0, 2, 0, 0);
   // Move the rock.
+  /*
   terrain.afterHeightsLoaded(function(gl, terrain, rocks) {
     terrain.setRockPositions(gl, rocks);
     terrain.setBushPositions(gl, bushes);
     terrain.setTreePositions(gl, trees);
   }.bind(this, gl, terrain, rocks))
-
+*/
   /**
    * Camera shader setup
    */
@@ -138,13 +163,14 @@ function main() {
 
     gl.uniform3fv(sceneCamera.uColor, [1.0, 1.0, 0.8]);
 
+    /*
     if ((absTime - lastLOD) / 10 > throttleLOD) {
       for (model of sceneDrawables) {
         model.evaluateLOD(gl, sceneControls.x, sceneControls.y, sceneControls.z);
       }
       
       lastLOD = absTime;
-    }
+    }*/
 
     for (model of sceneDrawables) {
       model.predraw(gl);
@@ -184,8 +210,8 @@ function main() {
 
     resize();
    
-    sceneCamera.setRock(-(Math.sin((now / 10) - 0.2) / 6));
-    sceneControls.processKeys(terrain, boat.boatWidth, boat.boatLength);
+    sceneCamera.setBob(-(Math.sin((now / 10) - 0.2) / 6));
+    sceneControls.processKeys(boat.boatWidth, boat.boatLength);
     boat.setPositionRotation(gl, -sceneControls.x - 0.8, 6 + (Math.sin(now / 10) / 10), -sceneControls.z, sceneControls.boatY);
     
     drawShadowMap(sceneCamera, sceneControls, sceneDrawables, deltaTime, absTime);

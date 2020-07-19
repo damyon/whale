@@ -311,6 +311,17 @@ class ProjectedModel extends Drawable {
     return this.vertexCount;
   }
   
+  loadShapeElement(gl, id) {
+    let ele = document.getElementById(id);
+
+    this.loadShape(gl, ele.src);
+  }
+
+  loadTextureElement(gl, id) {
+    let ele = document.getElementById(id);
+
+    this.loadTexture(gl, ele.src);
+  }
 
   loadShape(gl, filename) {
     const image = new Image();
@@ -436,12 +447,14 @@ class ProjectedModel extends Drawable {
 
       clipOffset = 0;
       offset = 0;
-      for (k = 0; k < 2; k++) {
+      //for (k = 0; k < 2; k++) {
+      for (k = 0; k < 1; k++) {
         for (i = this.getLOD() - 1; i >= 0; i--) {
           for (j = this.getLOD() - 1; j >= 0; j--) {
             // Shift every second row 1/2 a unit right.
             hSkew = j % 2;
-            
+            hSkew = 0;
+
             offsetX = one + i * unit;
             offsetY = one + j * unit;
             if (k) {
@@ -556,7 +569,8 @@ class ProjectedModel extends Drawable {
       start = 0;
       posIndex = 0;
       let skipN = 0, noSkipN = 0, skipNK = 0, noSkipNK = 0;
-      for (k = 0; k < 2; k++) {
+      for (k = 0; k < 1; k++) {
+      //for (k = 0; k < 2; k++) {
         for (i = this.getLOD() - 1; i >= 0; i--) {
           for (j = this.getLOD() - 1; j >= 0; j--) {
             if (!clipList.includes(posIndex)) {
@@ -596,7 +610,8 @@ class ProjectedModel extends Drawable {
 
       one = 1 / this.getLOD();
       posIndex = 0;
-      for (k = 0; k < 2; k++) {
+      for (k = 0; k < 1; k++) {
+      //for (k = 0; k < 2; k++) {
         for (i = this.getLOD() - 1; i >= 0; i--) {
           for (j = this.getLOD() - 1; j >= 0; j--) {
             if (!clipList.includes(posIndex)) {
@@ -651,7 +666,7 @@ class ProjectedModel extends Drawable {
     if (shadow) {
       gl.uniform1i(camera.isWater, 0);
     }
-    gl.uniform1i(camera.isSand, 0);
+    //gl.uniform1i(camera.isSand, 0);
 
     {
       const numComponents = 3;

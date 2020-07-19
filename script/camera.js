@@ -225,7 +225,7 @@ class Camera {
     this.height = 0;
   }
 
-  setRock(rock) {
+  setBob(rock) {
     this.rock = rock;
   }
 

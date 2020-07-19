@@ -42,6 +42,7 @@ class Character extends Drawable {
   }
 
   moveForward(gl, deltaTime, absTime) {
+    return;
     let stepTime = Math.max(absTime - this.lastPath, 0) / 10;
     let step = {
       x: -deltaTime / 1000 * this.targetSpeed,
@@ -123,7 +124,7 @@ class Character extends Drawable {
 
   draw(gl, camera, shadow, deltaTime, absTime) {
     let element = null;
-    gl.uniform1i(camera.isSand, 0);
+    //gl.uniform1i(camera.isSand, 0);
     this.updatePathThrottle(absTime);
 
     this.moveForward(gl, deltaTime, absTime);
