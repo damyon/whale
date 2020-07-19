@@ -3,8 +3,8 @@ class WhaleTorso extends ProjectedModel {
 
   constructor() {
     super();
-    this.size = 16;
-    this.fat = 2;
+    this.size = 32;
+    this.fat = 4;
     this.LOD = 128;
     
     
